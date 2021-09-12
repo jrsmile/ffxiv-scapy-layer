@@ -166,7 +166,7 @@ if __name__ == "__main__":
         cap.write(packet)
 
     print ('[+] Examining net.pcap file...\n')
-    packets = sniff(offline='walking.pcapng')#, session=TCPSession)
+    packets = sniff(offline='walking.pcap')#, session=TCPSession)
     for p in packets: 
         hexdump(p)
         p.show()
