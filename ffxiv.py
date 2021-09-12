@@ -42,6 +42,46 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
         ClientLobbyIpcType[x["opcode"]] = x["name"]
     
 # The Packet dissector class
+
+class FFXIV_IPC(Packet):
+    name = "FFXIV_IPC"
+    fields_desc=[XLEShortField("ipc_magic",         None),
+                 LEShortEnumField("ipc_type",       None, ServerZoneIpcType),
+                 XLEShortField("ipc_unknown1",      None),
+                 XLEShortField("ipc_server_id",     None),
+                 LEIntField("ipc_epoch",            None),
+                 XLEIntField("ipc_unknown2",        None),
+                 PacketListField("data",            None, Any, length_from = lambda pkt: pkt.underlayer.Size)
+                 #BitField("is_unknown",             None,1,1,1),
+                 ]
+
+
+
+class FFXIV_ClientKeepAlive(Packet):
+    name = "FFXIV_ClientKeepAlive"
+    fields_desc=[LEIntField("ID",                   None),
+                 LEIntField("Epoch",                None)
+                 ]
+
+
+
+
+class FFXIV_ServerKeepAlive(Packet):
+    name = "FFXIV_ServerKeepAlive"
+    fields_desc=[LEIntField("ID",                   None),
+                 LEIntField("Epoch",                None)
+                 ]
+
+class FFXIV_Segment(Packet):
+    name = "FFXIV_Segment"
+    fields_desc=[ LEFieldLenField("Size",    None, length_of="data",fmt="<I"), 
+                  XLEIntField("Source",      None), 
+                  XLEIntField("Target",      None), 
+                  LEShortEnumField("Type",   None, {3:"IPC",7:"ClientKeepAlive",8:"ServerKeepAlive"}), 
+                  XShortField("Unknown",     None),
+                  PacketListField("data",    None, Any, length_from = lambda pkt: pkt.Size)
+                 ]
+
 class FFXIV(Packet):
     name = "FFXIV"
     fields_desc=[ XLEIntField("magic0",       None),
@@ -52,12 +92,13 @@ class FFXIV(Packet):
                   LEShortField("bundle_len",  None),
                   XLEShortField("unknown1",   None),
                   XLEShortField("conn_type",  None),
-                  LEShortField("msg_count",   None),
+                  LEFieldLenField("msg_count",None, count_of="data"),
                   XByteField("encoding",      None),
                   ByteField("compressed",     None),
                   XLEShortField("unknown3" ,  None),
                   XLEShortField("unknown4" ,  None),
                   XLEShortField("unknown5" ,  None),
+                  PacketListField("data",     None, FFXIV_Segment, count_from = lambda pkt: pkt.msg_count)
                  ]
     
     @classmethod
@@ -69,49 +110,14 @@ class FFXIV(Packet):
 bind_layers(TCP, FFXIV, sport=54993)
 bind_layers(TCP, FFXIV, dport=54993)
 bind_layers(TCP, FFXIV, sport=54993, dport=54993)
-
-
-
-class FFXIV_Segment(Packet):
-    name = "FFXIV_Segment"
-    fields_desc=[ LEIntField("Size",         None), 
-                  XLEIntField("Source",      None), 
-                  XLEIntField("Target",      None), 
-                  LEShortEnumField("Type",   None, {3:"IPC",7:"ClientKeepAlive",8:"ServerKeepAlive"}), 
-                  XShortField("Unknown",     None) 
-                 ]
-
+bind_layers(TCP, FFXIV, sport=54994)
+bind_layers(TCP, FFXIV, dport=54994)
+bind_layers(TCP, FFXIV, sport=54994, dport=54994)
 bind_layers(FFXIV, FFXIV_Segment)
-
-class FFXIV_IPC(Packet):
-    name = "FFXIV_IPC"
-    fields_desc=[XLEShortField("ipc_magic",         None),
-                 LEShortEnumField("ipc_type",       None, ServerZoneIpcType),
-                 XLEShortField("ipc_unknown1",      None),
-                 XLEShortField("ipc_server_id",     None),
-                 LEIntField("ipc_epoch",            None),
-                 XLEIntField("ipc_unknown2",        None),
-                 ByteField("ipc_data",              None)
-                 ]
-
 bind_layers(FFXIV_Segment, FFXIV_IPC, Type=3)
-
-class FFXIV_ClientKeepAlive(Packet):
-    name = "FFXIV_ClientKeepAlive"
-    fields_desc=[LEIntField("ID",                   None),
-                 LEIntField("Epoch",                None)
-                 ]
-
 bind_layers(FFXIV_Segment, FFXIV_ClientKeepAlive, Type=7)
-
-
-class FFXIV_ServerKeepAlive(Packet):
-    name = "FFXIV_ServerKeepAlive"
-    fields_desc=[LEIntField("ID",                   None),
-                 LEIntField("Epoch",                None)
-                 ]
-
 bind_layers(FFXIV_Segment, FFXIV_ServerKeepAlive, Type=8)
+
 
 """
 Selftests
@@ -155,7 +161,7 @@ if __name__ == "__main__":
         cap.write(packet)
 
     print ('[+] Examining net.pcap file...\n')
-    packets = sniff(offline='cap-in-out.pcapng')#, session=TCPSession)
+    packets = sniff(offline='walking.pcapng')#, session=TCPSession)
     for p in packets: 
         hexdump(p)
         p.show()
