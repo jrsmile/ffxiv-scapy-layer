@@ -49,4 +49,7 @@ if __name__ == "__main__":
     log.info(f"Started queue polling")
 
     log.info(f"Sniffing packets... Ctrl + C to stop sniffing")
-    sniff(filter="tcp and net 195.82.50.0/24", prn=add_packet_to_queue, store=0, session=IPSession) # 195.82.50.0/24 Europe
+    sniff(filter="tcp and net (195.82.50.0/24 or 204.2.229.0/24 or 124.150.157.0/24", prn=add_packet_to_queue, store=0, session=IPSession) 
+    # 195.82.50.0/24 Europe
+    # 204.2.229.0/24 NA
+    # 124.150.157.0/24 Japan
