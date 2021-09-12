@@ -18,7 +18,7 @@ from scapy.all import Ether, IP, TCP
 import json
 import urllib.request, json 
 
-# generate enum lists for FFXIV_IPX Types
+# generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json") as url:
     opcodes = json.loads(url.read().decode())
 
@@ -41,30 +41,33 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
     for x in opcodes[0]["lists"]["ClientLobbyIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ClientLobbyIpcType[x["opcode"]] = x["name"]
     
+    joined_list = ServerZoneIpcType | ServerLobbyIpcType | ClientZoneIpcType | ClientLobbyIpcType
+    print(joined_list)
+    
 # The Packet dissector class
+
 
 class FFXIV_IPC(Packet):
     name = "FFXIV_IPC"
     fields_desc=[XLEShortField("ipc_magic",         None),
-                 LEShortEnumField("ipc_type",       None, ServerZoneIpcType),
+                 #MultipleTypeField([(LEShortEnumField("ipc_type", None, ServerZoneIpcType),  lambda pkt: pkt.underlayer.payload in ServerZoneIpcType.keys()),
+                 #                   (LEShortEnumField("ipc_type", None, ServerLobbyIpcType), lambda pkt: pkt.underlayer.payload in ServerLobbyIpcType.keys()),
+                 #                   (LEShortEnumField("ipc_type", None, ClientZoneIpcType),  lambda pkt: pkt.underlayer.payload in ClientZoneIpcType.keys()),
+                 #                   (LEShortEnumField("ipc_type", None, ClientLobbyIpcType), lambda pkt: pkt.underlayer.payload in ClientLobbyIpcType.keys()),
+                 #                   ],   LEShortField("ipc_type", None)),
+                 LEShortEnumField("ipc_type", None, joined_list),
                  XLEShortField("ipc_unknown1",      None),
                  XLEShortField("ipc_server_id",     None),
                  LEIntField("ipc_epoch",            None),
                  XLEIntField("ipc_unknown2",        None),
-                 PacketListField("data",            None, Any, length_from = lambda pkt: pkt.underlayer.Size)
-                 #BitField("is_unknown",             None,1,1,1),
+                 PacketListField("data",            None, Any, length_from = lambda pkt: pkt.underlayer.Size -16)
                  ]
-
-
 
 class FFXIV_ClientKeepAlive(Packet):
     name = "FFXIV_ClientKeepAlive"
     fields_desc=[LEIntField("ID",                   None),
                  LEIntField("Epoch",                None)
                  ]
-
-
-
 
 class FFXIV_ServerKeepAlive(Packet):
     name = "FFXIV_ServerKeepAlive"
@@ -79,7 +82,9 @@ class FFXIV_Segment(Packet):
                   XLEIntField("Target",      None), 
                   LEShortEnumField("Type",   None, {3:"IPC",7:"ClientKeepAlive",8:"ServerKeepAlive"}), 
                   XShortField("Unknown",     None),
-                  PacketListField("data",    None, Any, length_from = lambda pkt: pkt.Size)
+                  ConditionalField(PacketListField("data",    None, FFXIV_ServerKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 8),
+                  ConditionalField(PacketListField("data",    None, FFXIV_ClientKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 7),
+                  ConditionalField(PacketListField("data",    None, FFXIV_IPC, length_from = lambda pkt: pkt.Size)             , lambda pkt: pkt.Type == 3)
                  ]
 
 class FFXIV(Packet):
@@ -152,7 +157,7 @@ if __name__ == "__main__":
             unknown4=0x0000,
             unknown5=0x0000,
             )/FFXIV_Segment(
-                Size=64,
+                #Size=64,
                 Source=0x1073851f,
                 Target=0x1073851f,
                 Type="ServerKeepAlive",

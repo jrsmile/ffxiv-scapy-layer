@@ -26,3 +26,8 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
         ClientLobbyIpcType[x["opcode"]] = x["name"]
     
     print(ClientLobbyIpcType)
+    
+    joined_list = ServerZoneIpcType | ServerLobbyIpcType | ClientZoneIpcType | ClientLobbyIpcType
+    
+    print("#############################")
+    print(joined_list)
