@@ -16,7 +16,7 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 from scapy.all import *
 from scapy.all import Ether, IP, TCP
 import json
-import urllib.request, json 
+import urllib.request, json
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json") as url:
@@ -25,25 +25,25 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
     ServerZoneIpcType = {}
     for x in opcodes[0]["lists"]["ServerZoneIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ServerZoneIpcType[x["opcode"]] = x["name"]
-    
-    
+
+
     ServerLobbyIpcType = {}
     for x in opcodes[0]["lists"]["ServerLobbyIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ServerLobbyIpcType[x["opcode"]] = x["name"]
-    
-        
+
+
     ClientZoneIpcType = {}
     for x in opcodes[0]["lists"]["ClientZoneIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ClientZoneIpcType[x["opcode"]] = x["name"]
-    
-    
+
+
     ClientLobbyIpcType = {}
     for x in opcodes[0]["lists"]["ClientLobbyIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ClientLobbyIpcType[x["opcode"]] = x["name"]
-    
+
     joined_list = ServerZoneIpcType | ServerLobbyIpcType | ClientZoneIpcType | ClientLobbyIpcType
     print(joined_list)
-    
+
 # The Packet dissector class
 
 class FFXIV_ActorMove(Packet):
@@ -75,7 +75,7 @@ class FFXIV_ActorCast(Packet):
                  LEShortField("posZ",               None),
                  LEShortField("Unknown3",           None)
                  ]
-    
+
 class FFXIV_ActorControl(Packet):
     name = "FFXIV_ActorControl"
     fields_desc=[LEShortField("Type",              None),
@@ -139,10 +139,10 @@ class FFXIV_ServerKeepAlive(Packet):
 
 class FFXIV_Segment(Packet):
     name = "FFXIV_Segment"
-    fields_desc=[ LEFieldLenField("Size",    None, length_of="data",fmt="<I"), 
-                  XLEIntField("Source",      None), 
-                  XLEIntField("Target",      None), 
-                  LEShortEnumField("Type",   None, {3:"IPC",7:"ClientKeepAlive",8:"ServerKeepAlive"}), 
+    fields_desc=[ LEFieldLenField("Size",    None, length_of="data",fmt="<I"),
+                  XLEIntField("Source",      None),
+                  XLEIntField("Target",      None),
+                  LEShortEnumField("Type",   None, {3:"IPC",7:"ClientKeepAlive",8:"ServerKeepAlive"}),
                   XShortField("Unknown",     None),
                   #ConditionalField(PacketListField("data",    None, FFXIV_ServerKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 8),
                   #ConditionalField(PacketListField("data",    None, FFXIV_ClientKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 7),
@@ -167,7 +167,7 @@ class FFXIV(Packet):
                   XLEShortField("unknown5" ,  None),
                   #PacketListField("data",     None, FFXIV_Segment, count_from = lambda pkt: pkt.msg_count)
                  ]
-    
+
     @classmethod
     def tcp_reassemble(cls, data, metadata):
         length = struct.unpack("<I", data[24:28])[0]
