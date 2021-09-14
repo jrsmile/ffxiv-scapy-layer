@@ -16,10 +16,11 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 import urllib.request
 import json
 import struct
-from scapy.all import *
+#from scapy.all import *
 from scapy.layers.inet import TCP
 from scapy.fields import ByteField, LEShortField, LEIntField, IEEEFloatField, XLEShortField, LEShortEnumField, LEFieldLenField, XLEIntField, XShortField, PacketListField, LELongField, XByteField
 from scapy.packet import Packet, bind_layers
+from scapy.compat import Any
 
 
 # generate enum lists for FFXIV_IPC Types
@@ -151,7 +152,7 @@ class FFXIV_IPC(Packet):
                  #                   (LEShortEnumField("ipc_type", None, ClientZoneIpcType),  lambda pkt: pkt.underlayer.payload in ClientZoneIpcType.keys()),
                  #                   (LEShortEnumField("ipc_type", None, ClientLobbyIpcType), lambda pkt: pkt.underlayer.payload in ClientLobbyIpcType.keys()),
                  #                   ],   LEShortField("ipc_type", None)),
-                 LEShortEnumField("ipc_type", None, joined_list),
+                 LEShortEnumField("ipc_type",       None, joined_list),
                  XLEShortField("ipc_unknown1",      None),
                  XLEShortField("ipc_server_id",     None),
                  LEIntField("ipc_epoch",            None),
