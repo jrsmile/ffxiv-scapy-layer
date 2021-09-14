@@ -7,5 +7,7 @@ python-safety:
 pylint:
   stage: test
   image: registry.gitlab.com/pipeline-components/pylint:amd64-0b84da4
+  before_script:
+    - pip install scapy
   script:
     - pylint --errors-only ffxiv.py
