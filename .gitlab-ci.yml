@@ -8,6 +8,6 @@ pylint:
   stage: test
   image: registry.gitlab.com/pipeline-components/pylint:amd64-0b84da4
   before_script:
-    - pip install scapy
+    - pip install -r requirements.txt
   script:
     - pylint --errors-only ffxiv.py
