@@ -10,7 +10,7 @@ from ffxiv import FFXIV, FFXIV_IPC, FFXIV_UpdatePositionHandler, FFXIV_UpdateHpM
 
 
 import json
-import urllib.request, json 
+import urllib.request, json
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json") as url:
@@ -19,22 +19,22 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
     ServerZoneIpcType = {}
     for x in opcodes[0]["lists"]["ServerZoneIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ServerZoneIpcType[x["opcode"]] = x["name"]
-    
-    
+
+
     ServerLobbyIpcType = {}
     for x in opcodes[0]["lists"]["ServerLobbyIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ServerLobbyIpcType[x["opcode"]] = x["name"]
-    
-        
+
+
     ClientZoneIpcType = {}
     for x in opcodes[0]["lists"]["ClientZoneIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ClientZoneIpcType[x["opcode"]] = x["name"]
-    
-    
+
+
     ClientLobbyIpcType = {}
     for x in opcodes[0]["lists"]["ClientLobbyIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
         ClientLobbyIpcType[x["opcode"]] = x["name"]
-    
+
     joined_list = ServerZoneIpcType | ServerLobbyIpcType | ClientZoneIpcType | ClientLobbyIpcType
 
 
@@ -63,7 +63,7 @@ def poll_packet_queue(token: str):
             # No packets, let's wait for some
             sleep(0.1)
             continue
-        
+
         raw_packet = packets.popleft()
         try:
             print(f"{raw_packet.summary()}")
