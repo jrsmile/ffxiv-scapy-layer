@@ -33,4 +33,6 @@ release:
     - npm install -g semantic-release @semantic-release/gitlab-config
     - npm install -g semantic-release @semantic-release/changelog
     - npm install -g semantic-release @semantic-release/release-notes-generator
+    - npm install -g semantic-release @semantic-release/exec
+    - npm install -g semantic-release @semantic-release/commit-analyzer
     - semantic-release -e @semantic-release/gitlab-config
