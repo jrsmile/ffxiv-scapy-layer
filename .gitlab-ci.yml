@@ -6,6 +6,6 @@ python-safety:
 
 pylint:
   stage: test
-  image: registry.gitlab.com/pipeline-components/pylint:latest
+  image: registry.gitlab.com/pipeline-components/pylint:amd64-0b84da4
   script:
     - pylint **/*.py
