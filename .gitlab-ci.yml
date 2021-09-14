@@ -3,3 +3,9 @@ python-safety:
   image: pipelinecomponents/python-safety:latest
   script:
     - safety check --full-report -r requirements.txt
+
+pylint:
+  stage: test
+  image: registry.gitlab.com/pipeline-components/pylint:latest
+  script:
+    - pylint **/*.py
