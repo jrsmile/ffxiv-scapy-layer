@@ -139,10 +139,10 @@ class FFXIV_UpdatePositionHandler(Packet):
                  ]
 
 class FFXIV_IPC(Packet):
-    """[summary]
+    """[IPC Opcode Multiplexer]
 
     Args:
-        Packet ([type]): [description]
+        Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
     """
     name = "FFXIV_IPC"
     fields_desc=[XLEShortField("ipc_magic",         None),
@@ -160,10 +160,10 @@ class FFXIV_IPC(Packet):
                  ]
 
 class FFXIV_ClientKeepAlive(Packet):
-    """[summary]
+    """[recurring keepalive Packet]
 
     Args:
-        Packet ([type]): [description]
+        Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
     """
     name = "FFXIV_ClientKeepAlive"
     fields_desc=[LEIntField("ID",                   None),
@@ -171,10 +171,10 @@ class FFXIV_ClientKeepAlive(Packet):
                  ]
 
 class FFXIV_ServerKeepAlive(Packet):
-    """[summary]
+    """[recurring keepalive Packet]
 
     Args:
-        Packet ([type]): [description]
+        Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
     """
     name = "FFXIV_ServerKeepAlive"
     fields_desc=[LEIntField("ID",                   None),
@@ -182,10 +182,10 @@ class FFXIV_ServerKeepAlive(Packet):
                  ]
 
 class FFXIV_Segment(Packet):
-    """[summary]
+    """[segments the raw packet]
 
     Args:
-        Packet ([type]): [description]
+        Packet ([Packet]): [raw packet stripped by FFXIV]
     """
     name = "FFXIV_Segment"
     fields_desc=[ LEFieldLenField("Size",    None, length_of="data",fmt="<I"),
@@ -199,13 +199,13 @@ class FFXIV_Segment(Packet):
                  ]
 
 class FFXIV(Packet):
-    """[summary]
+    """[base Class]
 
     Args:
-        Packet ([type]): [description]
+        Packet ([Packet]): [a raw packed strippt by the TCP Layer]
 
     Returns:
-        [type]: [description]
+        [None]: [description]
     """
     name = "FFXIV"
     fields_desc=[ XLEIntField("magic0",       None),
@@ -227,14 +227,14 @@ class FFXIV(Packet):
 
     @classmethod
     def tcp_reassemble(cls, data, metadata):
-        """[summary]
+        """[called by sniff(session=TCPSession) reassembles the tcp stream if packet spans over multiple TCP packets]
 
         Args:
-            data ([type]): [description]
-            metadata ([type]): [description]
+            data ([Packet]): [a raw packed strippt by the TCP Layer]
+            metadata ([dict]): [stores partial streams]
 
         Returns:
-            [type]: [description]
+            [Packet]: [reassembled Packet]
         """
         length = struct.unpack("<I", data[24:28])[0]
         if len(data) == length:
