@@ -21,12 +21,14 @@ release:
   stage: release
   only:
     refs:
-    - master
-    - alpha
+    - main
+    #- alpha
     # This matches maintenance branches
-    - /^(([0-9]+)\.)?([0-9]+)\.x/
+    #- /^(([0-9]+)\.)?([0-9]+)\.x/
     # This matches pre-releases
-    - /^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
+    #- /^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
   script:
     - npm install @semantic-release/gitlab
+    - npm install @semantic-release/changelog
+    - npm install @semantic-release/release-notes-generator
     - npx semantic-release
