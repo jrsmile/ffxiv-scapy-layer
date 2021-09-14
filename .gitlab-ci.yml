@@ -11,3 +11,18 @@ pylint:
     - pip install -r requirements.txt
   script:
     - pylint --errors-only ffxiv.py
+
+release:
+  image: node:13
+  stage: release
+  only:
+    refs:
+    - master
+    - alpha
+    # This matches maintenance branches
+    - /^(([0-9]+)\.)?([0-9]+)\.x/
+    # This matches pre-releases
+    - /^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
+  script:
+    - npm install @semantic-release/gitlab
+    - npx semantic-release

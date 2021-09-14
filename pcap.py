@@ -1,12 +1,11 @@
 import logging
+import os.path
 from collections import deque
 from functools import partial
 from time import sleep, time
 from threading import Thread
-from scapy.all import sniff, Packet, IPSession, TCPSession
-import os.path
-import ffxiv
-from ffxiv import FFXIV, FFXIV_IPC, FFXIV_UpdatePositionHandler, FFXIV_UpdateHpMpTp
+from scapy.all import sniff, Packet, TCPSession
+from ffxiv import FFXIV_IPC
 
 
 import json
