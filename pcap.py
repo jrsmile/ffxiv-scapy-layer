@@ -3,8 +3,9 @@ from collections import deque
 from functools import partial
 from time import sleep, time
 from threading import Thread
-from scapy.all import sniff, Packet, IPSession
+from scapy.all import sniff, Packet, IPSession, TCPSession
 import ffxiv
+from ffxiv import FFXIV, FFXIV_IPC, FFXIV_UpdatePositionHandler
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -34,7 +35,9 @@ def poll_packet_queue(token: str):
         
         raw_packet = packets.popleft()
         try:
-            raw_packet.show()
+            print(f"{raw_packet.summary()}")
+            if raw_packet.haslayer(FFXIV_IPC):
+                raw_packet.show()
         except:
             log.exception(f"Failed to parse: {raw_packet.summary()}")
             continue
@@ -49,7 +52,7 @@ if __name__ == "__main__":
     log.info(f"Started queue polling")
 
     log.info(f"Sniffing packets... Ctrl + C to stop sniffing")
-    sniff(filter="tcp and net (195.82.50.0/24 or 204.2.229.0/24 or 124.150.157.0/24", prn=add_packet_to_queue, store=0, session=IPSession) 
+    sniff(filter="tcp and net (195.82.50.0/24 or 204.2.229.0/24 or 124.150.157.0/24)", prn=add_packet_to_queue, store=0, session=TCPSession)
     # 195.82.50.0/24 Europe
     # 204.2.229.0/24 NA
     # 124.150.157.0/24 Japan

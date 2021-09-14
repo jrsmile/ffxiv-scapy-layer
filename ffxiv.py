@@ -46,6 +46,27 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
     
 # The Packet dissector class
 
+class FFXIV_UpdateHpMpTp(Packet):
+    name = "FFXIV_UpdateHpMpTp"
+    fields_desc=[LEIntField("HP",               None),
+                 LEShortField("MP",             None),
+                 LEShortField("TP",             None),
+                 ]
+
+
+class FFXIV_UpdatePositionHandler(Packet):
+    name = "FFXIV_UpdatePositionHandler"
+    fields_desc=[LEIntField("rot",              None),
+                 LEIntField("2",                None),
+                 LEIntField("x",                None),
+                 LEIntField("y",                None),
+                 LEIntField("z",                None),
+                 LEIntField("6",                None),
+                 LEIntField("7",                None),
+                 LEIntField("8",                None),
+                 LEIntField("9",                None),
+                 LEIntField("10",               None),
+                 ]
 
 class FFXIV_IPC(Packet):
     name = "FFXIV_IPC"
@@ -60,7 +81,7 @@ class FFXIV_IPC(Packet):
                  XLEShortField("ipc_server_id",     None),
                  LEIntField("ipc_epoch",            None),
                  XLEIntField("ipc_unknown2",        None),
-                 PacketListField("data",            None, Any, length_from = lambda pkt: pkt.underlayer.Size -16)
+                 PacketListField("data",            None, FFXIV_UpdatePositionHandler, length_from = lambda pkt: pkt.underlayer.Size -16)
                  ]
 
 class FFXIV_ClientKeepAlive(Packet):
@@ -108,7 +129,7 @@ class FFXIV(Packet):
     
     @classmethod
     def tcp_reassemble(cls, data, metadata):
-        length = struct.unpack("!H", data[3:5])[0] + 5
+        length = struct.unpack("<I", data[24:28])[0]
         if len(data) == length:
             return FFXIV(data)
 
@@ -122,7 +143,8 @@ bind_layers(FFXIV, FFXIV_Segment)
 bind_layers(FFXIV_Segment, FFXIV_IPC, Type=3)
 bind_layers(FFXIV_Segment, FFXIV_ClientKeepAlive, Type=7)
 bind_layers(FFXIV_Segment, FFXIV_ServerKeepAlive, Type=8)
-
+bind_layers(FFXIV_IPC, FFXIV_UpdatePositionHandler, ipc_type=431)
+bind_layers(FFXIV_IPC, FFXIV_UpdateHpMpTp, ipc_type=423)
 
 """
 Selftests
