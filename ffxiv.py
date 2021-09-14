@@ -46,6 +46,47 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
     
 # The Packet dissector class
 
+class FFXIV_ActorMove(Packet):
+    name = "FFXIV_ActorMove"
+    fields_desc=[ByteField("headRotation",          None),
+                 ByteField("rotation",              None),
+                 ByteField("animationType",         None),
+                 ByteField("animationState",        None),
+                 ByteField("animationSpeed",        None),
+                 ByteField("unknownRotation",       None),
+                 LEShortField("X",                  None),
+                 LEShortField("Y",                  None),
+                 LEShortField("Z",                  None),
+                 LEIntField("Unknown1",             None),
+                 ]
+
+class FFXIV_ActorCast(Packet):
+    name = "FFXIV_ActorCast"
+    fields_desc=[LEShortField("Action",             None),
+                 ByteField("SkillType",             None),
+                 ByteField("Unknown1",              None),
+                 LEIntField("ItemID",               None),
+                 IEEEFloatField("CastTime",         None),
+                 LEIntField("TargetID",             None),
+                 IEEEFloatField("Rotation",         None),
+                 LEIntField("Unknown2",             None),
+                 LEShortField("posX",               None),
+                 LEShortField("posY",               None),
+                 LEShortField("posZ",               None),
+                 LEShortField("Unknown3",           None)
+                 ]
+    
+class FFXIV_ActorControl(Packet):
+    name = "FFXIV_ActorControl"
+    fields_desc=[LEShortField("Type",              None),
+                 LEShortField("Unknown1",          None),
+                 LEIntField("Data0",               None),
+                 LEIntField("Data1",               None),
+                 LEIntField("Data2",               None),
+                 LEIntField("Data3",               None),
+                 LEIntField("Data4",               None)
+                 ]
+
 class FFXIV_UpdateHpMpTp(Packet):
     name = "FFXIV_UpdateHpMpTp"
     fields_desc=[LEIntField("HP",               None),
@@ -81,7 +122,7 @@ class FFXIV_IPC(Packet):
                  XLEShortField("ipc_server_id",     None),
                  LEIntField("ipc_epoch",            None),
                  XLEIntField("ipc_unknown2",        None),
-                 PacketListField("data",            None, FFXIV_UpdatePositionHandler, length_from = lambda pkt: pkt.underlayer.Size -16)
+                 PacketListField("data",            None, Any, length_from = lambda pkt: pkt.underlayer.Size -16)
                  ]
 
 class FFXIV_ClientKeepAlive(Packet):
@@ -103,9 +144,9 @@ class FFXIV_Segment(Packet):
                   XLEIntField("Target",      None), 
                   LEShortEnumField("Type",   None, {3:"IPC",7:"ClientKeepAlive",8:"ServerKeepAlive"}), 
                   XShortField("Unknown",     None),
-                  ConditionalField(PacketListField("data",    None, FFXIV_ServerKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 8),
-                  ConditionalField(PacketListField("data",    None, FFXIV_ClientKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 7),
-                  ConditionalField(PacketListField("data",    None, FFXIV_IPC, length_from = lambda pkt: pkt.Size)             , lambda pkt: pkt.Type == 3)
+                  #ConditionalField(PacketListField("data",    None, FFXIV_ServerKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 8),
+                  #ConditionalField(PacketListField("data",    None, FFXIV_ClientKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 7),
+                  #ConditionalField(PacketListField("data",    None, FFXIV_IPC, length_from = lambda pkt: pkt.Size)             , lambda pkt: pkt.Type == 3)
                  ]
 
 class FFXIV(Packet):
@@ -124,7 +165,7 @@ class FFXIV(Packet):
                   XLEShortField("unknown3" ,  None),
                   XLEShortField("unknown4" ,  None),
                   XLEShortField("unknown5" ,  None),
-                  PacketListField("data",     None, FFXIV_Segment, count_from = lambda pkt: pkt.msg_count)
+                  #PacketListField("data",     None, FFXIV_Segment, count_from = lambda pkt: pkt.msg_count)
                  ]
     
     @classmethod
@@ -144,8 +185,10 @@ bind_layers(FFXIV_Segment, FFXIV_IPC, Type=3)
 bind_layers(FFXIV_Segment, FFXIV_ClientKeepAlive, Type=7)
 bind_layers(FFXIV_Segment, FFXIV_ServerKeepAlive, Type=8)
 bind_layers(FFXIV_IPC, FFXIV_UpdatePositionHandler, ipc_type=431)
+bind_layers(FFXIV_IPC, FFXIV_UpdatePositionHandler, ipc_type=248)
 bind_layers(FFXIV_IPC, FFXIV_UpdateHpMpTp, ipc_type=423)
-
+bind_layers(FFXIV_IPC, FFXIV_ActorCast, ipc_type=349)
+bind_layers(FFXIV_IPC, FFXIV_ActorControl, ipc_type=176)
 """
 Selftests
 """
