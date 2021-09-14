@@ -1,0 +1,19 @@
+{"release": {
+    "branch": "master",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      ["@semantic-release/exec", {
+        "prepareCmd": "curl --request PUT --header \"PRIVATE-TOKEN: $GITLAB_TOKEN\" \"https://s2.behead.de/api/v4/projects/2/variables/CI_SEM_VER\" --form \"value=${nextRelease.version}\""
+      }],
+      "@semantic-release/git",
+      [
+        "@semantic-release/gitlab",
+        {
+          "gitlabUrl": "https://s2.behead.de"
+        }
+      ]
+    ]
+  }
+}
