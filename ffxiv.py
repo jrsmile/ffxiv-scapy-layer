@@ -17,7 +17,7 @@ import urllib.request
 import json
 import struct
 from scapy.all import *
-from scapy.all import TCP
+from scapy.layers.inet import TCP
 from scapy.fields import ByteField, LEShortField, LEIntField, IEEEFloatField, XLEShortField, LEShortEnumField, LEFieldLenField, XLEIntField, XShortField, PacketListField, LELongField, XByteField
 from scapy.packet import Packet, bind_layers
 
