@@ -13,13 +13,14 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 """
 
 
+import urllib.request
+import json
+import struct
 from scapy.all import *
 from scapy.all import TCP
 from scapy.fields import ByteField, LEShortField, LEIntField, IEEEFloatField, XLEShortField, LEShortEnumField, LEFieldLenField, XLEIntField, XShortField, PacketListField, LELongField, XByteField
 from scapy.packet import Packet, bind_layers
-import urllib.request
-import json
-import struct
+
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json") as url:
@@ -226,6 +227,15 @@ class FFXIV(Packet):
 
     @classmethod
     def tcp_reassemble(cls, data, metadata):
+        """[summary]
+
+        Args:
+            data ([type]): [description]
+            metadata ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """
         length = struct.unpack("<I", data[24:28])[0]
         if len(data) == length:
             return FFXIV(data)
