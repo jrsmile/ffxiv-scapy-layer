@@ -28,8 +28,9 @@ release:
     # This matches pre-releases
     #- /^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
   script:
+    - npm install semantic-release
     - npm install @semantic-release/gitlab
-    - npm install -g semantic-release @semantic-release/gitlab-config
+    - npm install @semantic-release/gitlab-config
     - npm install @semantic-release/changelog
     - npm install @semantic-release/release-notes-generator
     - npx semantic-release
