@@ -17,8 +17,9 @@ from scapy.all import *
 from scapy.all import TCP
 from scapy.fields import ByteField, LEShortField, LEIntField, IEEEFloatField, XLEShortField, LEShortEnumField, LEFieldLenField, XLEIntField, XShortField, PacketListField, LELongField, XByteField
 from scapy.packet import Packet, bind_layers
+import urllib.request
 import json
-import urllib.request, json
+import struct
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json") as url:
@@ -49,6 +50,11 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
 # The Packet dissector class
 
 class FFXIV_ActorMove(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_ActorMove"
     fields_desc=[ByteField("headRotation",          None),
                  ByteField("rotation",              None),
@@ -63,6 +69,11 @@ class FFXIV_ActorMove(Packet):
                  ]
 
 class FFXIV_ActorCast(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_ActorCast"
     fields_desc=[LEShortField("Action",             None),
                  ByteField("SkillType",             None),
@@ -79,6 +90,11 @@ class FFXIV_ActorCast(Packet):
                  ]
 
 class FFXIV_ActorControl(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_ActorControl"
     fields_desc=[LEShortField("Type",              None),
                  LEShortField("Unknown1",          None),
@@ -90,6 +106,11 @@ class FFXIV_ActorControl(Packet):
                  ]
 
 class FFXIV_UpdateHpMpTp(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_UpdateHpMpTp"
     fields_desc=[LEIntField("HP",               None),
                  LEShortField("MP",             None),
@@ -98,6 +119,11 @@ class FFXIV_UpdateHpMpTp(Packet):
 
 
 class FFXIV_UpdatePositionHandler(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_UpdatePositionHandler"
     fields_desc=[LEIntField("rot",              None),
                  LEIntField("2",                None),
@@ -112,6 +138,11 @@ class FFXIV_UpdatePositionHandler(Packet):
                  ]
 
 class FFXIV_IPC(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_IPC"
     fields_desc=[XLEShortField("ipc_magic",         None),
                  #MultipleTypeField([(LEShortEnumField("ipc_type", None, ServerZoneIpcType),  lambda pkt: pkt.underlayer.payload in ServerZoneIpcType.keys()),
@@ -128,18 +159,33 @@ class FFXIV_IPC(Packet):
                  ]
 
 class FFXIV_ClientKeepAlive(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_ClientKeepAlive"
     fields_desc=[LEIntField("ID",                   None),
                  LEIntField("Epoch",                None)
                  ]
 
 class FFXIV_ServerKeepAlive(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_ServerKeepAlive"
     fields_desc=[LEIntField("ID",                   None),
                  LEIntField("Epoch",                None)
                  ]
 
 class FFXIV_Segment(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
     name = "FFXIV_Segment"
     fields_desc=[ LEFieldLenField("Size",    None, length_of="data",fmt="<I"),
                   XLEIntField("Source",      None),
@@ -152,6 +198,14 @@ class FFXIV_Segment(Packet):
                  ]
 
 class FFXIV(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     name = "FFXIV"
     fields_desc=[ XLEIntField("magic0",       None),
                   XLEIntField("magic1",       None),
