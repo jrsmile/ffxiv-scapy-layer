@@ -14,7 +14,9 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 
 
 from scapy.all import *
-from scapy.all import Ether, IP, TCP
+from scapy.all import TCP
+from scapy.fields import ByteField, LEShortField, LEIntField, IEEEFloatField, XLEShortField, LEShortEnumField, LEFieldLenField, XLEIntField, XShortField, PacketListField, LELongField, XByteField
+from scapy.packet import Packet, bind_layers
 import json
 import urllib.request, json
 
