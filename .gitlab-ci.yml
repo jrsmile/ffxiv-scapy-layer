@@ -22,7 +22,7 @@ pylint:
   before_script:
   - pip install -r requirements.txt
   script:
-  - pylint --errors-only ffxiv.py
+  - pylint ffxiv.py
 release:
   image: node:13
   stage: release
