@@ -46,26 +46,10 @@ create-wiki:
     refs:
     - main
   script:
-<<<<<<< HEAD
-    - pip install pdoc3
-    - git clone https://oauth2:${WIKI_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.git
-    - cd ffxiv-scapy-layer
-    - pip install -r requirements.txt
-    - pdoc ffxiv.py > ../home.md
-    - cd ..
-    - git clone https://oauth2:${WIKI_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.wiki.git
-    - cd ffxiv-scapy-layer.wiki
-    - git config --global user.name "JRSmile"
-    - git config --global user.email jan@behead.de
-    - mv ../home.md .
-    - git add .
-    - git commit -m "auto update"
-    - git push
-=======
   - pip install pdoc3
-  - pip install scapy
   - git clone https://oauth2:${WIKI_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.git
   - cd ffxiv-scapy-layer
+  - pip install -r requirements.txt
   - pdoc ffxiv.py > ../home.md
   - cd ..
   - git clone https://oauth2:${WIKI_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.wiki.git
@@ -80,4 +64,3 @@ create-wiki:
   - git push
 sast:
   stage: test
->>>>>>> 0e2385e89b493ff27b030de8ff716909387aafc7
