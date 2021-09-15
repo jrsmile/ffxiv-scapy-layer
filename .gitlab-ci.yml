@@ -49,8 +49,8 @@ create-wiki:
     refs:
     - main
   script:
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.wiki.git
+    - git clone https://oauth2:${WIKI_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.wiki.git
     - cd ffxiv-scapy-layer.wiki
-    - git config --global user.name "JRSmile"
-    - git config --global user.email jan@behead.de
+    #- git config --global user.name "JRSmile"
+    #- git config --global user.email jan@behead.de
     - git push
