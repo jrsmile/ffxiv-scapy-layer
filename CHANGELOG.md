@@ -1,3 +1,12 @@
+## [1.0.6](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.5...v1.0.6) (2021-09-15)
+
+
+### Bug Fixes
+
+* ci ([c233353](https://s2.behead.de/git/ffxiv-scapy-layer/commit/c233353fbb98ef9425e17692b79020cdff6e70c0))
+* ci ([c74cc63](https://s2.behead.de/git/ffxiv-scapy-layer/commit/c74cc636134ae081d80f19c982df144b1a874269))
+* pylint badge ([10e7e3e](https://s2.behead.de/git/ffxiv-scapy-layer/commit/10e7e3e5f6c8cb6c63f96b597492075e0fa17733))
+
 ## [1.0.5](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.4...v1.0.5) (2021-09-15)
 
 
