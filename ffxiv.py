@@ -16,9 +16,10 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 import urllib.request
 import json
 import struct
+import os
 #from scapy.all import *
 from scapy.layers.inet import TCP
-from scapy.fields import ByteField, LEShortField, LEIntField, IEEEFloatField, XLEShortField, LEShortEnumField, LEFieldLenField, XLEIntField, XShortField, PacketListField, LELongField, XByteField
+from scapy.fields import ByteField, LEShortField, LEIntField, IEEEFloatField, XLEShortField, LEShortEnumField, LEFieldLenField, XLEIntField, XShortField, PacketListField, LELongField, XByteField, ConditionalField
 from scapy.packet import Packet, bind_layers
 from scapy.compat import Any
 
@@ -147,17 +148,11 @@ class FFXIV_IPC(Packet):
     """
     name = "FFXIV_IPC"
     fields_desc=[XLEShortField("ipc_magic",         None),
-                 #MultipleTypeField([(LEShortEnumField("ipc_type", None, ServerZoneIpcType),  lambda pkt: pkt.underlayer.payload in ServerZoneIpcType.keys()),
-                 #                   (LEShortEnumField("ipc_type", None, ServerLobbyIpcType), lambda pkt: pkt.underlayer.payload in ServerLobbyIpcType.keys()),
-                 #                   (LEShortEnumField("ipc_type", None, ClientZoneIpcType),  lambda pkt: pkt.underlayer.payload in ClientZoneIpcType.keys()),
-                 #                   (LEShortEnumField("ipc_type", None, ClientLobbyIpcType), lambda pkt: pkt.underlayer.payload in ClientLobbyIpcType.keys()),
-                 #                   ],   LEShortField("ipc_type", None)),
                  LEShortEnumField("ipc_type",       None, joined_list),
                  XLEShortField("ipc_unknown1",      None),
                  XLEShortField("ipc_server_id",     None),
                  LEIntField("ipc_epoch",            None),
                  XLEIntField("ipc_unknown2",        None),
-                 PacketListField("data",            None, Any, length_from = lambda pkt: pkt.underlayer.Size -16)
                  ]
 
 class FFXIV_ClientKeepAlive(Packet):
@@ -194,10 +189,21 @@ class FFXIV_Segment(Packet):
                   XLEIntField("Target",      None),
                   LEShortEnumField("Type",   None, {3:"IPC",7:"ClientKeepAlive",8:"ServerKeepAlive"}),
                   XShortField("Unknown",     None),
-                  #ConditionalField(PacketListField("data",    None, FFXIV_ServerKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 8),
-                  #ConditionalField(PacketListField("data",    None, FFXIV_ClientKeepAlive, length_from = lambda pkt: pkt.Size) , lambda pkt: pkt.Type == 7),
-                  #ConditionalField(PacketListField("data",    None, FFXIV_IPC, length_from = lambda pkt: pkt.Size)             , lambda pkt: pkt.Type == 3)
+                  ConditionalField(PacketListField("data",    None, FFXIV_ServerKeepAlive, length_from = lambda pkt: pkt.Size -16) , lambda pkt: pkt.Type == 8),
+                  ConditionalField(PacketListField("data",    None, FFXIV_ClientKeepAlive, length_from = lambda pkt: pkt.Size -16) , lambda pkt: pkt.Type == 7),
+                  ConditionalField(PacketListField("data",    None, FFXIV_IPC, length_from = lambda pkt: pkt.Size -16)         , lambda pkt: pkt.Type == 3)
                  ]
+
+    def extract_padding(self, s):
+        """[the key to multi segments in one bundle]
+
+        Args:
+            s ([Packet]): [the stripped packed from FFXIV Base Class]
+
+        Returns:
+            [Packet]: [Only returns the packet but does not consumes the rest of the incomming packet.]
+        """
+        return '', s
 
 class FFXIV(Packet):
     """[base Class]
@@ -214,7 +220,7 @@ class FFXIV(Packet):
                   XLEIntField("magic2",       None),
                   XLEIntField("magic3",       None),
                   LELongField("epoch",        None),
-                  LEShortField("bundle_len",  None),
+                  LEFieldLenField("bundle_len",None),
                   XLEShortField("unknown1",   None),
                   XLEShortField("conn_type",  None),
                   LEFieldLenField("msg_count",None, count_of="data"),
@@ -223,7 +229,7 @@ class FFXIV(Packet):
                   XLEShortField("unknown3" ,  None),
                   XLEShortField("unknown4" ,  None),
                   XLEShortField("unknown5" ,  None),
-                  #PacketListField("data",     None, FFXIV_Segment, count_from = lambda pkt: pkt.msg_count)
+                  PacketListField("data",     None, FFXIV_Segment, count_from = lambda pkt: pkt.msg_count)
                  ]
 
     @classmethod
@@ -252,7 +258,6 @@ bind_layers(FFXIV_Segment, FFXIV_IPC, Type=3)
 bind_layers(FFXIV_Segment, FFXIV_ClientKeepAlive, Type=7)
 bind_layers(FFXIV_Segment, FFXIV_ServerKeepAlive, Type=8)
 bind_layers(FFXIV_IPC, FFXIV_UpdatePositionHandler, ipc_type=431)
-bind_layers(FFXIV_IPC, FFXIV_UpdatePositionHandler, ipc_type=248)
 bind_layers(FFXIV_IPC, FFXIV_UpdateHpMpTp, ipc_type=423)
 bind_layers(FFXIV_IPC, FFXIV_ActorCast, ipc_type=349)
 bind_layers(FFXIV_IPC, FFXIV_ActorControl, ipc_type=176)
