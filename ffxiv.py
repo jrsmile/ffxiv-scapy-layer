@@ -310,7 +310,7 @@ class FFXIV(Packet):
         Returns:
             [Packet]: [reassembled Packet]
         """
-        #pylint: unused-argument
+        #pylint: disable=unused-argument
 
         length = struct.unpack("<I", data[24:28])[0]
         if len(data) == length:
