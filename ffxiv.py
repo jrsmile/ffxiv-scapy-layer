@@ -7,7 +7,7 @@
 
 # scapy.contrib.description = Final Fantasy 14 v5.58
 # scapy.contrib.status = loads
-
+# pylint: disable=invalid-name
 """
 FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 """
@@ -16,7 +16,6 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 import urllib.request
 import json
 import struct
-import os
 
 # from scapy.all import *
 from scapy.layers.inet import TCP
@@ -36,7 +35,6 @@ from scapy.fields import (
     ConditionalField,
 )
 from scapy.packet import Packet, bind_layers
-from scapy.compat import Any
 
 
 # generate enum lists for FFXIV_IPC Types
@@ -311,6 +309,7 @@ class FFXIV(Packet):
         Returns:
             [Packet]: [reassembled Packet]
         """
+        #pylint: disable=inconsistent-return-statements, unused-argument
         length = struct.unpack("<I", data[24:28])[0]
         if len(data) == length:
             return FFXIV(data)
