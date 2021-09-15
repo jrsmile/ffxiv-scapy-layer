@@ -263,7 +263,7 @@ class FFXIV_Segment(Packet):
             s ([Packet]): [the stripped packed from FFXIV Base Class]
 
         Returns:
-            [Packet]: [Only returns the packet but does not consumes the rest of the incomming packet.]
+            [Packet]: [Returns the packet but does not consumes the rest of the incomming packet.]
         """
         return "", s
 
@@ -301,7 +301,8 @@ class FFXIV(Packet):
 
     @classmethod
     def tcp_reassemble(cls, data, metadata):
-        """[called by sniff(session=TCPSession) reassembles the tcp stream if packet spans over multiple TCP packets]
+        """[called by sniff(session=TCPSession),
+        reassembles the tcp stream if packet spans over multiple TCP packets]
 
         Args:
             data ([Packet]): [a raw packed strippt by the TCP Layer]
