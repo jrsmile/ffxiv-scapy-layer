@@ -48,7 +48,6 @@ with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVO
         ClientLobbyIpcType[x["opcode"]] = x["name"]
 
     joined_list = ServerZoneIpcType | ServerLobbyIpcType | ClientZoneIpcType | ClientLobbyIpcType
-    print(joined_list)
 
 # The Packet dissector class
 
