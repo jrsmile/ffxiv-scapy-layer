@@ -1,3 +1,10 @@
+## [1.0.3](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.2...v1.0.3) (2021-09-15)
+
+
+### Bug Fixes
+
+* reenabled opcode finder ([3e0e354](https://s2.behead.de/git/ffxiv-scapy-layer/commit/3e0e35435e5c9b32a2e5c9309273a9d46f843f2d))
+
 ## [1.0.2](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.1...v1.0.2) (2021-09-15)
 
 
