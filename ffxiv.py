@@ -275,6 +275,7 @@ class FFXIV(Packet):
     Returns:
         [None]: [description]
     """
+    #pylint: disable=inconsistent-return-statements
 
     name = "FFXIV"
     fields_desc = [
@@ -309,7 +310,8 @@ class FFXIV(Packet):
         Returns:
             [Packet]: [reassembled Packet]
         """
-        #pylint: disable=inconsistent-return-statements, unused-argument
+        #pylint: unused-argument
+
         length = struct.unpack("<I", data[24:28])[0]
         if len(data) == length:
             return FFXIV(data)
