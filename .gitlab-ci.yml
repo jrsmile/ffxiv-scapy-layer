@@ -57,6 +57,8 @@ create-wiki:
   - git config --global user.name "JRSmile"
   - git config --global user.email jan@behead.de
   - mv ../home.md .
+  - echo Last updated >> home.md
+  - date >> home.md
   - git add .
   - git commit -m "auto update"
   - git push
