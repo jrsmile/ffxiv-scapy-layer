@@ -1,6 +1,10 @@
 stages:
   - lint
+  - test
   - release
+
+include:
+  - template: Code-Quality.gitlab-ci.yml
 
 python-safety:
   stage: lint
