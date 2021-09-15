@@ -1,3 +1,14 @@
+## [1.0.5](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.4...v1.0.5) (2021-09-15)
+
+
+### Bug Fixes
+
+* C0301 ([4a51e77](https://s2.behead.de/git/ffxiv-scapy-layer/commit/4a51e775af248763f5b4eb0eef5eaeca40562944))
+* ci ([fd8ea76](https://s2.behead.de/git/ffxiv-scapy-layer/commit/fd8ea76140ad463fc49f62946b293f17dd0c3543))
+* pylint ([2411063](https://s2.behead.de/git/ffxiv-scapy-layer/commit/2411063b25ca0813c3fe47dd6385c80e386e4a55))
+* pylint ([3985426](https://s2.behead.de/git/ffxiv-scapy-layer/commit/3985426044b0b86aa12dc47bca10650aa5f67760))
+* strict linting ([fc6736c](https://s2.behead.de/git/ffxiv-scapy-layer/commit/fc6736cbb5a4d49c2352f0cab1beea7827d9f7b1))
+
 ## [1.0.4](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.3...v1.0.4) (2021-09-15)
 
 
