@@ -5,7 +5,7 @@ from functools import partial
 from time import sleep, time
 from threading import Thread
 from scapy.all import sniff, Packet, TCPSession
-from ffxiv import FFXIV_IPC, FFXIV
+from ffxiv import FFXIV_IPC, FFXIV, FFXIV_UpdatePositionHandler
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -35,10 +35,13 @@ def poll_packet_queue(token: str):
 
         raw_packet = packets.popleft()
         try:
-            print(f"{raw_packet.summary()}")
-            #if raw_packet.haslayer(FFXIV_IPC) and raw_packet[FFXIV].msg_count > 1:
-            if raw_packet.haslayer(FFXIV):
-                raw_packet.show()
+            #print(f"{raw_packet.summary()}")
+            if raw_packet.haslayer(FFXIV_UpdatePositionHandler): # and raw_packet[FFXIV].msg_count > 1:
+            #if raw_packet.haslayer(FFXIV):
+                posX = raw_packet["FFXIV_UpdatePositionHandler"].x
+                posY = raw_packet["FFXIV_UpdatePositionHandler"].y
+                posZ = raw_packet["FFXIV_UpdatePositionHandler"].z
+                print(f"X: {posX} Y: {posY} Z: {posZ}")
         except:
             log.exception(f"Failed to parse: {raw_packet.summary()}")
             continue

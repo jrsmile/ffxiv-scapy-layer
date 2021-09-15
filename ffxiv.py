@@ -131,8 +131,8 @@ class FFXIV_UpdatePositionHandler(Packet):
     fields_desc=[LEIntField("rot",              None),
                  LEIntField("2",                None),
                  LEIntField("x",                None),
-                 LEIntField("y",                None),
                  LEIntField("z",                None),
+                 LEIntField("y",                None),
                  LEIntField("6",                None),
                  LEIntField("7",                None),
                  LEIntField("8",                None),
@@ -215,21 +215,21 @@ class FFXIV(Packet):
         [None]: [description]
     """
     name = "FFXIV"
-    fields_desc=[ XLEIntField("magic0",       None),
-                  XLEIntField("magic1",       None),
-                  XLEIntField("magic2",       None),
-                  XLEIntField("magic3",       None),
-                  LELongField("epoch",        None),
+    fields_desc=[ XLEIntField("magic0",        None),
+                  XLEIntField("magic1",        None),
+                  XLEIntField("magic2",        None),
+                  XLEIntField("magic3",        None),
+                  LELongField("epoch",         None),
                   LEFieldLenField("bundle_len",None),
-                  XLEShortField("unknown1",   None),
-                  XLEShortField("conn_type",  None),
-                  LEFieldLenField("msg_count",None, count_of="data"),
-                  XByteField("encoding",      None),
-                  ByteField("compressed",     None),
-                  XLEShortField("unknown3" ,  None),
-                  XLEShortField("unknown4" ,  None),
-                  XLEShortField("unknown5" ,  None),
-                  PacketListField("data",     None, FFXIV_Segment, count_from = lambda pkt: pkt.msg_count)
+                  XLEShortField("unknown1",    None),
+                  XLEShortField("conn_type",   None),
+                  LEFieldLenField("msg_count", None, count_of="data"),
+                  XByteField("encoding",       None),
+                  ByteField("compressed",      None),
+                  XLEShortField("unknown3" ,   None),
+                  XLEShortField("unknown4" ,   None),
+                  XLEShortField("unknown5" ,   None),
+                  PacketListField("data",      None, FFXIV_Segment, count_from = lambda pkt: pkt.msg_count)
                  ]
 
     @classmethod
