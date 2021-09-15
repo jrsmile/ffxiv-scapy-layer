@@ -1,3 +1,11 @@
+## [1.0.4](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.3...v1.0.4) (2021-09-15)
+
+
+### Bug Fixes
+
+* ci ([159abe8](https://s2.behead.de/git/ffxiv-scapy-layer/commit/159abe849828863d6118ad4f78879d6954a3e81c))
+* code standarts ([bc88bd7](https://s2.behead.de/git/ffxiv-scapy-layer/commit/bc88bd78c435cd99d692e69980b294761e7667a5))
+
 ## [1.0.3](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.2...v1.0.3) (2021-09-15)
 
 
