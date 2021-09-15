@@ -50,3 +50,5 @@ create-wiki:
     - main
   script:
     - git clone https://s2.behead.de/git/ffxiv-scapy-layer.wiki.git
+    - cd ffxiv-scapy-layer.wiki
+    - git push
