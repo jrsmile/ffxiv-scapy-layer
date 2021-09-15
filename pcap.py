@@ -5,11 +5,38 @@ from functools import partial
 from time import sleep, time
 from threading import Thread
 from scapy.all import sniff, Packet, TCPSession
-from ffxiv import FFXIV_IPC, FFXIV, FFXIV_UpdatePositionHandler
+from ffxiv import FFXIV_IPC, FFXIV, FFXIV_UpdatePositionHandler, FFXIV_Segment
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 log.setLevel(logging.INFO)
+
+import urllib.request, json
+
+# generate enum lists for FFXIV_IPC Types
+with urllib.request.urlopen("https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json") as url:
+    opcodes = json.loads(url.read().decode())
+
+    ServerZoneIpcType = {}
+    for x in opcodes[0]["lists"]["ServerZoneIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
+        ServerZoneIpcType[x["opcode"]] = x["name"]
+
+
+    ServerLobbyIpcType = {}
+    for x in opcodes[0]["lists"]["ServerLobbyIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
+        ServerLobbyIpcType[x["opcode"]] = x["name"]
+
+
+    ClientZoneIpcType = {}
+    for x in opcodes[0]["lists"]["ClientZoneIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
+        ClientZoneIpcType[x["opcode"]] = x["name"]
+
+
+    ClientLobbyIpcType = {}
+    for x in opcodes[0]["lists"]["ClientLobbyIpcType"]: # 0 = Global client region, 1 = CN, 2 = KR
+        ClientLobbyIpcType[x["opcode"]] = x["name"]
+
+    joined_list = ServerZoneIpcType | ServerLobbyIpcType | ClientZoneIpcType | ClientLobbyIpcType
 
 
 packets = deque()
@@ -36,12 +63,25 @@ def poll_packet_queue(token: str):
         raw_packet = packets.popleft()
         try:
             #print(f"{raw_packet.summary()}")
+            if raw_packet.haslayer(FFXIV_IPC):
+                if raw_packet[FFXIV_IPC].ipc_type in joined_list.keys():
+                    pdfpath = f"PDFs/IPC_{raw_packet[FFXIV_IPC].ipc_type}_{joined_list[raw_packet[FFXIV_IPC].ipc_type]}.pdf"
+                else:
+                    pdfpath = f"PDFs/IPC_{raw_packet[FFXIV_IPC].ipc_type}.pdf"
+                if not os.path.isfile(pdfpath):
+                    raw_packet[FFXIV_IPC].pdfdump(pdfpath)
+                    print()
+
             if raw_packet.haslayer(FFXIV_UpdatePositionHandler): # and raw_packet[FFXIV].msg_count > 1:
-            #if raw_packet.haslayer(FFXIV):
                 posX = raw_packet["FFXIV_UpdatePositionHandler"].x
                 posY = raw_packet["FFXIV_UpdatePositionHandler"].y
                 posZ = raw_packet["FFXIV_UpdatePositionHandler"].z
                 print(f"X: {posX} Y: {posY} Z: {posZ}")
+            if raw_packet.haslayer(FFXIV):
+                result = (f"{raw_packet.show(dump=True)}")
+                for item in result.split("\n"):
+                    if "ipc_type" in item:
+                        print (item.strip())
         except:
             log.exception(f"Failed to parse: {raw_packet.summary()}")
             continue
