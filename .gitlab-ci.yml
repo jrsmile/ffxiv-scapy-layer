@@ -52,6 +52,6 @@ create-wiki:
     - git clone https://oauth2:${WIKI_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.wiki.git
     - cd ffxiv-scapy-layer.wiki
     - date > test.md
-    - git add.
+    - git add .
     - git commit -m "auto update"
     - git push
