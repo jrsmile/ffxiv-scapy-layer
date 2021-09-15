@@ -41,3 +41,12 @@ release:
     - npm install -g semantic-release @semantic-release/exec
     - npm install -g semantic-release @semantic-release/commit-analyzer
     - semantic-release -e @semantic-release/gitlab-config
+
+create-wiki:
+  image: python:3.9
+  stage: release
+  only:
+    refs:
+    - main
+  script:
+    - git clone https://s2.behead.de/git/ffxiv-scapy-layer.wiki.git
