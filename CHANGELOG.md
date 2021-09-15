@@ -1,3 +1,10 @@
+## [1.0.2](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.1...v1.0.2) (2021-09-15)
+
+
+### Bug Fixes
+
+* playerpos ([7fba959](https://s2.behead.de/git/ffxiv-scapy-layer/commit/7fba959c8a48253adf2dd0e7f570f8cacb1eba19))
+
 ## [1.0.1](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.0...v1.0.1) (2021-09-15)
 
 
