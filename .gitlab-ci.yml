@@ -2,6 +2,9 @@ stages:
   - lint
   - release
 
+include:
+  - template: Code-Quality.gitlab-ci.yml
+
 python-safety:
   stage: lint
   image: pipelinecomponents/python-safety:latest
