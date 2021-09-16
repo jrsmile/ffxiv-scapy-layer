@@ -1,3 +1,10 @@
+# [1.4.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.3.0...v1.4.0) (2021-09-16)
+
+
+### Features
+
+* a lot of new classes ([d1a6c0e](https://s2.behead.de/git/ffxiv-scapy-layer/commit/d1a6c0e166435e6be51e3c0733af4041a7ccdcc5))
+
 # [1.3.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.2.0...v1.3.0) (2021-09-16)
 
 
