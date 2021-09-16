@@ -58,7 +58,7 @@ create-wiki:
   - pip install -r requirements.txt
   - mkdir docs
   - pdoc --no-search ffxiv.py -o ./docs
-    artifacts:
+  artifacts:
     paths:
       - ./docs/
 sast:
