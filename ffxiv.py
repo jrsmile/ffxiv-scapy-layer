@@ -33,6 +33,7 @@ from scapy.fields import (
     LELongField,
     XByteField,
     ConditionalField,
+    StrFixedLenField
 )
 from scapy.packet import Packet, bind_layers
 
@@ -72,6 +73,180 @@ with urllib.request.urlopen(
     )
 
 
+class InitZone(Packet):
+    """[InitZone]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "InitZone"
+    fields_desc = [
+        LEShortField("server_id", None),
+        LEShortField("zone_id", None),
+        LEShortField("unknown1", None),
+        LEShortField("content", None),
+        LEIntField("unknown3", None),
+        LEIntField("unknown4", None),
+        ByteField("weather_id", None),
+        ByteField("bitmask", None),
+        ByteField("bitmask1", None),
+        ByteField("unknown5", None),
+        LEIntField("unknown8", None),
+        LEShortField("festival_id", None),
+        LEShortField("additional_festival_id", None),
+        LEIntField("unknown9", None),
+        LEIntField("unknown10", None),
+        LEIntField("unknown11", None),
+        LEIntField("unknown120", None),
+        LEIntField("unknown121", None),
+        LEIntField("unknown122", None),
+        LEIntField("unknown123", None),
+        LEIntField("unknown130", None),
+        LEIntField("unknown131", None),
+        LEIntField("unknown132", None),
+        LEIntField("unknown140", None),
+        LEIntField("unknown141", None),
+        LEIntField("unknown142", None),
+        LEIntField("unknown15", None)
+    ]
+
+
+class PlayerSpawn(Packet):
+    """[PlayerSpawn]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "PlayerSpawn"
+    fields_desc = [
+        LEShortField("title", None),
+        LEShortField("u1b", None),
+        LEShortField("current_world_id", None),
+        LEShortField("home_world_id", None),
+        ByteField("gm_rank", None),
+        ByteField("u3c", None),
+        ByteField("u4", None),
+        ByteField("online_status", None),
+        ByteField("pose", None),
+        ByteField("u5a", None),
+        ByteField("u5b", None),
+        ByteField("u5c", None),
+        LELongField("target_id", None),
+        LEIntField("u6", None),
+        LEIntField("u7", None),
+        LELongField("main_weapon_model", None),
+        LELongField("sec_weapon_model", None),
+        LELongField("craft_tool_model", None),
+        LEIntField("u14", None),
+        LEIntField("u15", None),
+        LEIntField("b_npcbase", None),
+        LEIntField("b_npcname", None),
+        LEIntField("u18", None),
+        LEIntField("u19", None),
+        LEIntField("director_id", None),
+        LEIntField("owner_id", None),
+        LEIntField("u22", None),
+        LEIntField("h_pmax", None),
+        LEIntField("h_pcurr", None),
+        LEIntField("display_flags", None),
+        LEShortField("fate_id", None),
+        LEShortField("m_pcurr", None),
+        LEShortField("t_pcurr", None),
+        LEShortField("m_pmax", None),
+        LEShortField("t_pmax", None),
+        LEShortField("model_chara", None),
+        LEShortField("rotation", None),
+        LEShortField("active_minion", None),
+        ByteField("spawn_index", None),
+        ByteField("state", None),
+        ByteField("persistent_emote", None),
+        ByteField("model_type", None),
+        ByteField("subtype", None),
+        ByteField("voice", None),
+        ByteField("enemy_type", None),
+        ByteField("level", None),
+        ByteField("class_job", None),
+        ByteField("u26d", None),
+        LEShortField("u27a", None),
+        ByteField("current_mount", None),
+        ByteField("mount_head", None),
+        ByteField("mount_body", None),
+        ByteField("mount_feet", None),
+        ByteField("mount_color", None),
+        ByteField("scale", None),
+        LEIntField("u29b", None),
+        LEIntField("u30b", None),
+        LEIntField("models0", None),
+        LEIntField("models1", None),
+        LEIntField("models2", None),
+        LEIntField("models3", None),
+        LEIntField("models4", None),
+        LEIntField("models5", None),
+        LEIntField("models6", None),
+        LEIntField("models7", None),
+        LEIntField("models8", None),
+        LEIntField("models9", None),
+        StrFixedLenField("nickname", None),
+        StrFixedLenField("look", None),
+        StrFixedLenField("fc_tag", None)
+    ]
+
+
+class ItemInfo(Packet):
+    """[ItemInfo]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "ItemInfo"
+    fields_desc = [
+        LEIntField("index", None),
+        LEIntField("unknown0", None),
+        LEShortField("container_id", None),
+        LEShortField("slot", None),
+        LEIntField("quantity", None),
+        LEIntField("catalog_id", None),
+        LEIntField("reserved_flag", None),
+        LELongField("signature_id", None),
+        ByteField("quality", None),
+        ByteField("attribute2", None),
+        LEShortField("condition", None),
+        LEShortField("spiritbond", None),
+        LEShortField("stain", None),
+        LEShortField("glamour_catalog_id", None),
+        LEShortField("unknown6", None),
+        LEShortField("materia1", None),
+        LEShortField("materia2", None),
+        LEShortField("materia3", None),
+        LEShortField("materia4", None),
+        LEShortField("materia5", None),
+        ByteField("materia1_tier", None),
+        ByteField("materia2_tier", None),
+        ByteField("materia3_tier", None),
+        ByteField("materia4_tier", None),
+        ByteField("materia5_tier", None),
+        ByteField("unknown10", None),
+        LEIntField("unknown11", None)
+    ]
+
+
+class ContainerInfo(Packet):
+    """[ContainerInfo]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "ContainerInfo"
+    fields_desc = [
+        LEIntField("Sequence", None),
+        LEIntField("numItems", None),
+        LEIntField("ContainerID", None),
+        LEIntField("Unknown", None),
+    ]
 class InventoryActionAck(Packet):
     """[summary]
 
@@ -409,8 +584,8 @@ class Segment(Packet):
     name = "Segment"
     fields_desc = [
         LEFieldLenField("Size", None, length_of="data", fmt="<I"),
-        XLEIntField("Source", None),
-        XLEIntField("Target", None),
+        XLEIntField("ActorID", None),
+        XLEIntField("LoginUserID", None),
         LEShortEnumField(
             "Type", None, {3: "IPC", 7: "ClientKeepAlive",
                            8: "ServerKeepAlive"}
