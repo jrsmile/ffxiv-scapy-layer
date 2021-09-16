@@ -14,7 +14,7 @@ and python 3.9 or highter
 
 pip install scapy
 
-start scapy in the folder where ffxiv.px is present.
+start scapy in the folder where ffxiv.py is present.
 
 on the scapy command prompt enter the following:
 
