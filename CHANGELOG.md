@@ -1,3 +1,10 @@
+# [1.1.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.6...v1.1.0) (2021-09-16)
+
+
+### Features
+
+* added version batch ([deae2fe](https://s2.behead.de/git/ffxiv-scapy-layer/commit/deae2fe9abc7c5de295f507543de79b1d81f636a))
+
 ## [1.0.6](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.5...v1.0.6) (2021-09-15)
 
 
