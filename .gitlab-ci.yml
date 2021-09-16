@@ -60,6 +60,6 @@ create-wiki:
   - pdoc --no-search ffxiv.py -o ./docs
   artifacts:
     paths:
-      - ./ffxiv-scapy-layer/docs/
+      - ./docs/
 sast:
   stage: test
