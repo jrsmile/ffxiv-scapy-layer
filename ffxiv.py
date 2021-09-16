@@ -71,17 +71,60 @@ with urllib.request.urlopen(
         ServerZoneIpcType | ServerLobbyIpcType | ClientZoneIpcType | ClientLobbyIpcType
     )
 
-# The Packet dissector class
+
+class ClientTrigger(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    name = "ClientTrigger"
+    fields_desc = [
+        XLEShortField("commandID", None),
+        ByteField("unknown20", None),
+        ByteField("unknown21", None),
+        LEIntField("param11", None),
+        LEIntField("param12", None),
+        LEIntField("param2", None),
+        LEIntField("param4", None),
+        LEIntField("param5", None),
+        LELongField("param3", None)
+    ]
 
 
-class FFXIV_ActorMove(Packet):
+class UpdatePositionInstance(Packet):
     """[summary]
 
     Args:
         Packet ([type]): [description]
     """
 
-    name = "FFXIV_ActorMove"
+    name = "UpdatePositionInstance"
+    fields_desc = [
+        LEIntField("rot", None),
+        LEIntField("2", None),
+        LEIntField("x", None),
+        LEIntField("z", None),
+        LEIntField("y", None),
+        LEIntField("6", None),
+        LEIntField("7", None),
+        LEIntField("8", None),
+        LEIntField("9", None),
+        LEIntField("10", None)
+    ]
+
+
+class ActorMove(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "ActorMove"
     fields_desc = [
         ByteField("headRotation", None),
         ByteField("rotation", None),
@@ -96,14 +139,14 @@ class FFXIV_ActorMove(Packet):
     ]
 
 
-class FFXIV_ActorCast(Packet):
+class ActorCast(Packet):
     """[summary]
 
     Args:
         Packet ([type]): [description]
     """
 
-    name = "FFXIV_ActorCast"
+    name = "ActorCast"
     fields_desc = [
         LEShortField("Action", None),
         ByteField("SkillType", None),
@@ -120,14 +163,14 @@ class FFXIV_ActorCast(Packet):
     ]
 
 
-class FFXIV_ActorControl(Packet):
+class ActorControl(Packet):
     """[summary]
 
     Args:
         Packet ([type]): [description]
     """
 
-    name = "FFXIV_ActorControl"
+    name = "ActorControl"
     fields_desc = [
         LEShortField("Type", None),
         LEShortField("Unknown1", None),
@@ -139,14 +182,14 @@ class FFXIV_ActorControl(Packet):
     ]
 
 
-class FFXIV_UpdateHpMpTp(Packet):
+class UpdateHpMpTp(Packet):
     """[summary]
 
     Args:
         Packet ([type]): [description]
     """
 
-    name = "FFXIV_UpdateHpMpTp"
+    name = "UpdateHpMpTp"
     fields_desc = [
         LEIntField("HP", None),
         LEShortField("MP", None),
@@ -154,14 +197,14 @@ class FFXIV_UpdateHpMpTp(Packet):
     ]
 
 
-class FFXIV_UpdatePositionHandler(Packet):
+class UpdatePositionHandler(Packet):
     """[summary]
 
     Args:
         Packet ([type]): [description]
     """
 
-    name = "FFXIV_UpdatePositionHandler"
+    name = "UpdatePositionHandler"
     fields_desc = [
         LEIntField("rot", None),
         LEIntField("2", None),
@@ -169,17 +212,21 @@ class FFXIV_UpdatePositionHandler(Packet):
         LEIntField("z", None),
         LEIntField("y", None),
         LEIntField("6", None),
+        LEIntField("7", None),
+        LEIntField("8", None),
+        LEIntField("9", None),
+        LEIntField("10", None)
     ]
 
 
-class FFXIV_IPC(Packet):
+class IPC(Packet):
     """[IPC Opcode Multiplexer]
 
     Args:
         Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
     """
 
-    name = "FFXIV_IPC"
+    name = "IPC"
     fields_desc = [
         XLEShortField("ipc_magic", None),
         LEShortEnumField("ipc_type", None, joined_list),
@@ -190,49 +237,50 @@ class FFXIV_IPC(Packet):
     ]
 
 
-class FFXIV_ClientKeepAlive(Packet):
+class ClientKeepAlive(Packet):
     """[recurring keepalive Packet]
 
     Args:
         Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
     """
 
-    name = "FFXIV_ClientKeepAlive"
+    name = "ClientKeepAlive"
     fields_desc = [LEIntField("ID", None), LEIntField("Epoch", None)]
 
 
-class FFXIV_ServerKeepAlive(Packet):
+class ServerKeepAlive(Packet):
     """[recurring keepalive Packet]
 
     Args:
         Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
     """
 
-    name = "FFXIV_ServerKeepAlive"
+    name = "ServerKeepAlive"
     fields_desc = [LEIntField("ID", None), LEIntField("Epoch", None)]
 
 
-class FFXIV_Segment(Packet):
+class Segment(Packet):
     """[segments the raw packet]
 
     Args:
         Packet ([Packet]): [raw packet stripped by FFXIV]
     """
 
-    name = "FFXIV_Segment"
+    name = "Segment"
     fields_desc = [
         LEFieldLenField("Size", None, length_of="data", fmt="<I"),
         XLEIntField("Source", None),
         XLEIntField("Target", None),
         LEShortEnumField(
-            "Type", None, {3: "IPC", 7: "ClientKeepAlive", 8: "ServerKeepAlive"}
+            "Type", None, {3: "IPC", 7: "ClientKeepAlive",
+                           8: "ServerKeepAlive"}
         ),
         XShortField("Unknown", None),
         ConditionalField(
             PacketListField(
                 "data",
                 None,
-                FFXIV_ServerKeepAlive,
+                ServerKeepAlive,
                 length_from=lambda pkt: pkt.Size - 16,
             ),
             lambda pkt: pkt.Type == 8,
@@ -241,14 +289,14 @@ class FFXIV_Segment(Packet):
             PacketListField(
                 "data",
                 None,
-                FFXIV_ClientKeepAlive,
+                ClientKeepAlive,
                 length_from=lambda pkt: pkt.Size - 16,
             ),
             lambda pkt: pkt.Type == 7,
         ),
         ConditionalField(
             PacketListField(
-                "data", None, FFXIV_IPC, length_from=lambda pkt: pkt.Size - 16
+                "data", None, IPC, length_from=lambda pkt: pkt.Size - 16
             ),
             lambda pkt: pkt.Type == 3,
         ),
@@ -293,9 +341,8 @@ class FFXIV(Packet):
         XLEShortField("unknown3", None),
         XLEShortField("unknown4", None),
         XLEShortField("unknown5", None),
-        PacketListField(
-            "data", None, FFXIV_Segment, count_from=lambda pkt: pkt.msg_count
-        ),
+        PacketListField("data", None, Segment,
+                        count_from=lambda pkt: pkt.msg_count),
     ]
 
     @classmethod
@@ -323,11 +370,15 @@ bind_layers(TCP, FFXIV, sport=54993, dport=54993)
 bind_layers(TCP, FFXIV, sport=54994)
 bind_layers(TCP, FFXIV, dport=54994)
 bind_layers(TCP, FFXIV, sport=54994, dport=54994)
-bind_layers(FFXIV, FFXIV_Segment)
-bind_layers(FFXIV_Segment, FFXIV_IPC, Type=3)
-bind_layers(FFXIV_Segment, FFXIV_ClientKeepAlive, Type=7)
-bind_layers(FFXIV_Segment, FFXIV_ServerKeepAlive, Type=8)
-bind_layers(FFXIV_IPC, FFXIV_UpdatePositionHandler, ipc_type=431)
-bind_layers(FFXIV_IPC, FFXIV_UpdateHpMpTp, ipc_type=423)
-bind_layers(FFXIV_IPC, FFXIV_ActorCast, ipc_type=349)
-bind_layers(FFXIV_IPC, FFXIV_ActorControl, ipc_type=176)
+bind_layers(FFXIV, Segment)
+bind_layers(Segment, IPC, Type=3)
+bind_layers(Segment, ClientKeepAlive, Type=7)
+bind_layers(Segment, ServerKeepAlive, Type=8)
+
+# check for class existance and if implemented bind to IPC Layer
+for k, v in joined_list.items():
+    try:
+        eval(f"bind_layers(IPC, {v}, ipc_type={k})")
+        print(f"[+] Class {v} for Opcode {k} loaded...")
+    except:
+        print(f"[-] Class {v} for Opcode {k} not implemented.")

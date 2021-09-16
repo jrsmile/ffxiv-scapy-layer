@@ -9,7 +9,7 @@ from scapy.layers.l2 import Ether
 from scapy.layers.inet import IP, TCP
 from scapy.packet import Raw
 
-from ffxiv import FFXIV_IPC, FFXIV, FFXIV_UpdatePositionHandler, FFXIV_Segment
+from ffxiv import IPC, FFXIV, UpdatePositionHandler, Segment
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -17,7 +17,7 @@ log.setLevel(logging.INFO)
 
 import urllib.request, json
 
-conf.layers.filter([Ether, IP, TCP, FFXIV])
+#conf.layers.filter([Ether, IP, TCP, FFXIV]) # böse, ganz böse
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen(
@@ -79,13 +79,13 @@ def poll_packet_queue(token: str):
         raw_packet = packets.popleft()
         try:
             # print(f"{raw_packet.summary()}")
-            if raw_packet.haslayer(FFXIV_IPC):
-                if raw_packet[FFXIV_IPC].ipc_type in joined_list.keys():
-                    pdfpath = f"PDFs/IPC_{raw_packet[FFXIV_IPC].ipc_type}_{joined_list[raw_packet[FFXIV_IPC].ipc_type]}.pdf"
+            if raw_packet.haslayer(IPC):
+                if raw_packet[IPC].ipc_type in joined_list.keys():
+                    pdfpath = f"PDFs/IPC_{raw_packet[IPC].ipc_type}_{joined_list[raw_packet[IPC].ipc_type]}.pdf"
                 else:
-                    pdfpath = f"PDFs/IPC_{raw_packet[FFXIV_IPC].ipc_type}.pdf"
+                    pdfpath = f"PDFs/IPC_{raw_packet[IPC].ipc_type}.pdf"
                 if not os.path.isfile(pdfpath):
-                    raw_packet[FFXIV_IPC].pdfdump(pdfpath)
+                    raw_packet[IPC].pdfdump(pdfpath)
 
             # if raw_packet.haslayer(FFXIV_UpdatePositionHandler): # and raw_packet[FFXIV].msg_count > 1:
             #    posX = raw_packet["FFXIV_UpdatePositionHandler"].x
@@ -93,7 +93,7 @@ def poll_packet_queue(token: str):
             #    posZ = raw_packet["FFXIV_UpdatePositionHandler"].z
             #    print(f"X: {posX} Y: {posY} Z: {posZ}")
 
-            if raw_packet.haslayer(FFXIV):
+            if raw_packet.haslayer(IPC):
                 result = f"{raw_packet.show(dump=True)}"
                 for item in result.split("\n"):
                     if "ipc_type" in item:
