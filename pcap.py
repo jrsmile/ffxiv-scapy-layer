@@ -79,7 +79,8 @@ def poll_packet_queue(token: str):
         raw_packet = packets.popleft()
         try:
             # print(f"{raw_packet.summary()}")
-            if raw_packet.haslayer(IPC):
+            if raw_packet.haslayer(IPC) and raw_packet[IPC].ipc_magic == 0x14:
+                #other magic types are possibly TLS encrypted
                 if raw_packet[IPC].ipc_type in joined_list.keys():
                     pdfpath = f"PDFs/IPC_{raw_packet[IPC].ipc_type}_{joined_list[raw_packet[IPC].ipc_type]}.pdf"
                 else:

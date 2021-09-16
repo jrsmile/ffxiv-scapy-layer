@@ -72,6 +72,61 @@ with urllib.request.urlopen(
     )
 
 
+class InventoryActionAck(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "InventoryActionAck"
+    fields_desc = [
+        LEIntField("Sequence", None),
+        LEIntField("Type", None),
+        LEIntField("Unknown1", None),
+        LEIntField("Unknown2", None),
+    ]
+
+
+class UpdateInventorySlot(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    name = "UpdateInventorySlot"
+    fields_desc = [
+        LEIntField("Index", None),
+        LEIntField("Unknown0", None),
+        LEShortField("ContainerId", None),
+        LEShortField("Slot", None),
+        LEIntField("Quantity", None),
+        LEIntField("CatalogId", None),
+        LEIntField("ReservedFlag", None),
+        IEEEFloatField("SignatureId", None),
+        ByteField("Quality", None),
+        ByteField("Attribute2", None),
+        LEShortField("Condition", None),
+        LEShortField("Spiritbond", None),
+        LEShortField("Stain", None),
+        LEShortField("GlamourCatalogId", None),
+        LEShortField("Unknown6", None),
+        LEShortField("Materia1", None),
+        LEShortField("Materia2", None),
+        LEShortField("Materia3", None),
+        LEShortField("Materia4", None),
+        LEShortField("Materia5", None),
+        ByteField("Materia1Tier", None),
+        ByteField("Materia2Tier", None),
+        ByteField("Materia3Tier", None),
+        ByteField("Materia4Tier", None),
+        ByteField("Materia5Tier", None),
+        ByteField("Unknown10", None),
+        LEIntField("Unknown11", None)
+    ]
 class ClientTrigger(Packet):
     """[summary]
 
@@ -117,6 +172,24 @@ class UpdatePositionInstance(Packet):
     ]
 
 
+class ActorSetPos(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "ActorSetPos"
+    fields_desc = [
+        LEShortField("r16", None),
+        ByteField("waitForLoad", None),
+        ByteField("Unknown1", None),
+        LEIntField("Unknown2", None),
+        IEEEFloatField("x", None),
+        IEEEFloatField("y", None),
+        IEEEFloatField("z", None),
+        LEIntField("Unknown3", None),
+    ]
 class ActorMove(Packet):
     """[summary]
 
@@ -139,6 +212,33 @@ class ActorMove(Packet):
     ]
 
 
+class ActorGauge(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "ActorGauge"
+    fields_desc = [
+        ByteField("classJobID", None),
+        ByteField("data0", None),
+        ByteField("data1", None),
+        ByteField("data2", None),
+        ByteField("data3", None),
+        ByteField("data4", None),
+        ByteField("data5", None),
+        ByteField("data6", None),
+        ByteField("data7", None),
+        ByteField("data8", None),
+        ByteField("data9", None),
+        ByteField("data10", None),
+        ByteField("data11", None),
+        ByteField("data12", None),
+        ByteField("data13", None),
+        ByteField("data14", None)
+    ]
+
 class ActorCast(Packet):
     """[summary]
 
@@ -159,9 +259,49 @@ class ActorCast(Packet):
         LEShortField("posX", None),
         LEShortField("posY", None),
         LEShortField("posZ", None),
-        LEShortField("Unknown3", None),
+        LEShortField("Unknown3", None)
     ]
 
+
+class ActorControlTarget(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "ActorControlTarget"
+    fields_desc = [
+        LEShortField("Category", None),
+        LEShortField("padding", None),
+        LEIntField("param1", None),
+        LEIntField("param2", None),
+        LEIntField("param3", None),
+        LEIntField("param4", None),
+        LEIntField("padding1", None),
+        IEEEFloatField("TargetID", None)
+    ]
+
+
+class ActorControlSelf(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "ActorControlSelf"
+    fields_desc = [
+        LEShortField("Type", None),
+        LEShortField("Unknown0", None),
+        LEIntField("Data0", None),
+        LEIntField("Data1", None),
+        LEIntField("Data2", None),
+        LEIntField("Data3", None),
+        LEIntField("Data4", None),
+        LEIntField("Data5", None),
+        LEIntField("Data6", None)
+    ]
 
 class ActorControl(Packet):
     """[summary]
@@ -178,7 +318,7 @@ class ActorControl(Packet):
         LEIntField("Data1", None),
         LEIntField("Data2", None),
         LEIntField("Data3", None),
-        LEIntField("Data4", None),
+        LEIntField("Data4", None)
     ]
 
 
@@ -193,7 +333,7 @@ class UpdateHpMpTp(Packet):
     fields_desc = [
         LEIntField("HP", None),
         LEShortField("MP", None),
-        LEShortField("TP", None),
+        LEShortField("TP", None)
     ]
 
 
@@ -233,7 +373,7 @@ class IPC(Packet):
         XLEShortField("ipc_unknown1", None),
         XLEShortField("ipc_server_id", None),
         LEIntField("ipc_epoch", None),
-        XLEIntField("ipc_unknown2", None),
+        XLEIntField("ipc_unknown2", None)
     ]
 
 
