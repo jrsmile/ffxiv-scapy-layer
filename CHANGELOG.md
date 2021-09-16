@@ -1,3 +1,10 @@
+# [1.2.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.1.0...v1.2.0) (2021-09-16)
+
+
+### Features
+
+* impl dynamic class loading on known opcodes ([b5db3d9](https://s2.behead.de/git/ffxiv-scapy-layer/commit/b5db3d995158da7644ec811d007e9b44fa4bc6ef))
+
 # [1.1.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.0.6...v1.1.0) (2021-09-16)
 
 
