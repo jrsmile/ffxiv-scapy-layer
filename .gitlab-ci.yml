@@ -53,8 +53,8 @@ create-wiki:
     - main
   script:
   - pip install pdoc
-  - git clone https://oauth2:${WIKI_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.git
-  - cd ffxiv-scapy-layer
+  #- git clone https://oauth2:${WIKI_TOKEN}@s2.behead.de/git/ffxiv-scapy-layer.git
+  #- cd ffxiv-scapy-layer
   - pip install -r requirements.txt
   - mkdir docs
   - pdoc --no-search ffxiv.py -o ./docs
