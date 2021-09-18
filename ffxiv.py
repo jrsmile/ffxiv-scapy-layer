@@ -673,11 +673,24 @@ class FFXIV(Packet):
             [Packet]: [reassembled Packet]
         """
         #pylint: disable=unused-argument
-
-        length = struct.unpack("<I", data[24:28])[0]
-        if len(data) == length:
-            return FFXIV(data)
-
+        if struct.unpack("<I", data[:4])[0] == 1101025874:
+            length = struct.unpack("<I", data[24:28])[0]
+            if len(data) == length:
+                return FFXIV(data)
+            elif len(data) > length:
+                #print(f"###### Got MORE then Expected: actual len: {len(data)} proposed bundle_len: {length} ######")
+                pkt = FFXIV(data)
+                if hasattr(pkt.payload, "tcp_reassemble"):
+                    if pkt.payload.tcp_reassemble(data[length:], metadata):
+                        return pkt
+                else:
+                    return pkt
+            elif len(data) < length:  # not working
+                print(
+                    f"###### Got LESS then Expected: actual len: {len(data)} proposed bundle_len: {length} ######")
+                return None  # push rest back to queue
+        else:
+            return data  # void packet if not an FFXIV packet
 
 bind_layers(TCP, FFXIV, sport=54993)
 bind_layers(TCP, FFXIV, dport=54993)
