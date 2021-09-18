@@ -1,3 +1,11 @@
+## [1.4.4](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.4.3...v1.4.4) (2021-09-18)
+
+
+### Bug Fixes
+
+* nearly working tcp_reassembly ([7fb3fa9](https://s2.behead.de/git/ffxiv-scapy-layer/commit/7fb3fa9f959aa026da72f3eb12d349656d059fd4))
+* pipeline semantic-release requires node 14 ([efb5735](https://s2.behead.de/git/ffxiv-scapy-layer/commit/efb5735a94e7c8e046bb4c62313946bd109c77db))
+
 ## [1.4.3](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.4.2...v1.4.3) (2021-09-16)
 
 
