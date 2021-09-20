@@ -8,6 +8,7 @@ from scapy.all import sniff, Packet, TCPSession, conf
 from scapy.layers.l2 import Ether
 from scapy.layers.inet import IP, TCP
 from scapy.packet import Raw
+from scapy.utils import wrpcap
 
 from ffxiv import IPC, FFXIV, UpdatePositionHandler, Segment
 
@@ -73,7 +74,7 @@ def poll_packet_queue(token: str):
 
         if queue_size == 0:
             # No packets, let's wait for some
-            sleep(0.1)
+            sleep(0.01)
             continue
 
         raw_packet = packets.popleft()
@@ -87,6 +88,7 @@ def poll_packet_queue(token: str):
                     pdfpath = f"PDFs/IPC_{raw_packet[IPC].ipc_type}.pdf"
                 if not os.path.isfile(pdfpath):
                     raw_packet[IPC].pdfdump(pdfpath)
+                    wrpcap('IPCs.pcap', raw_packet, append=True)
 
             # if raw_packet.haslayer(FFXIV_UpdatePositionHandler): # and raw_packet[FFXIV].msg_count > 1:
             #    posX = raw_packet["FFXIV_UpdatePositionHandler"].x

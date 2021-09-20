@@ -6,13 +6,14 @@
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
 - lint
+- unittest
 - test
 - release
 include:
 - template: Code-Quality.gitlab-ci.yml
 - template: Security/SAST.gitlab-ci.yml
 python-safety:
-  stage: lint
+  stage: test
   image: pipelinecomponents/python-safety:latest
   script:
   - safety check --full-report -r requirements.txt
@@ -33,7 +34,7 @@ pylint:
       - ./pylint/
 pytest:
   image: python:3.9
-  stage: test
+  stage: unittest
   before_script:
     - pip install pytest
     - pip install -r requirements.txt
