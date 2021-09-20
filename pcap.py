@@ -1,3 +1,5 @@
+import json
+import urllib.request
 import logging
 import os.path
 from collections import deque
@@ -10,15 +12,14 @@ from scapy.layers.inet import IP, TCP
 from scapy.packet import Raw
 from scapy.utils import wrpcap
 
-from ffxiv import IPC, FFXIV, UpdatePositionHandler, Segment
+from ffxiv import IPC, FFXIV, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 log.setLevel(logging.INFO)
 
-import urllib.request, json
 
-#conf.layers.filter([Ether, IP, TCP, FFXIV]) # böse, ganz böse
+# conf.layers.filter([Ether, IP, TCP, FFXIV]) # böse, ganz böse
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen(
@@ -80,8 +81,8 @@ def poll_packet_queue(token: str):
         raw_packet = packets.popleft()
         try:
             # print(f"{raw_packet.summary()}")
-            if raw_packet.haslayer(IPC) and raw_packet[IPC].ipc_magic == 0x14:
-                #other magic types are possibly TLS encrypted
+            if raw_packet.haslayer(IPC) and (raw_packet[IPC].ipc_magic == 0x14):
+                # other magic types are possibly TLS encrypted
                 if raw_packet[IPC].ipc_type in joined_list.keys():
                     pdfpath = f"PDFs/IPC_{raw_packet[IPC].ipc_type}_{joined_list[raw_packet[IPC].ipc_type]}.pdf"
                 else:
@@ -96,11 +97,14 @@ def poll_packet_queue(token: str):
             #    posZ = raw_packet["FFXIV_UpdatePositionHandler"].z
             #    print(f"X: {posX} Y: {posY} Z: {posZ}")
 
-            #if raw_packet.haslayer(IPC):
+            # if raw_packet.haslayer(IPC) and not raw_packet.haslayer(Raw):
             #    result = f"{raw_packet.show(dump=True)}"
             #    for item in result.split("\n"):
-            #       if "ipc_type" in item:
+            #        if "ipc_type" in item:
             #            print(item.strip())
+
+            # if raw_packet.haslayer(ServerKeepAlive) or raw_packet.haslayer(ClientKeepAlive):
+            #    print("KeepAlive")
 
             if raw_packet.haslayer(Raw):
                 raw_packet.show()

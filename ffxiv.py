@@ -1,9 +1,9 @@
-## This file is part of Scapy
-## See http://www.secdev.org/projects/scapy for more informations
-## Copyright (C) Philippe Biondi <phil@secdev.org>
-## This program is published under a GPLv2 license
+# This file is part of Scapy
+# See http://www.secdev.org/projects/scapy for more informations
+# Copyright (C) Philippe Biondi <phil@secdev.org>
+# This program is published under a GPLv2 license
 ##
-## This Protocol Layer was written by JRSmile <ffxiv_layer@behead.de>
+# This Protocol Layer was written by JRSmile <ffxiv_layer@behead.de>
 
 # scapy.contrib.description = Final Fantasy 14 v5.58
 # scapy.contrib.status = loads
@@ -13,6 +13,7 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 """
 
 
+from typing import Any
 import urllib.request
 import json
 import struct
@@ -33,7 +34,8 @@ from scapy.fields import (
     LELongField,
     XByteField,
     ConditionalField,
-    StrFixedLenField
+    StrFixedLenField,
+    FieldListField
 )
 from scapy.packet import Packet, bind_layers
 
@@ -247,6 +249,8 @@ class ContainerInfo(Packet):
         LEIntField("ContainerID", None),
         LEIntField("Unknown", None),
     ]
+
+
 class InventoryActionAck(Packet):
     """[summary]
 
@@ -302,6 +306,8 @@ class UpdateInventorySlot(Packet):
         ByteField("Unknown10", None),
         LEIntField("Unknown11", None)
     ]
+
+
 class ClientTrigger(Packet):
     """[summary]
 
@@ -365,6 +371,8 @@ class ActorSetPos(Packet):
         IEEEFloatField("z", None),
         LEIntField("Unknown3", None),
     ]
+
+
 class ActorMove(Packet):
     """[summary]
 
@@ -414,6 +422,7 @@ class ActorGauge(Packet):
         ByteField("data14", None)
     ]
 
+
 class ActorCast(Packet):
     """[summary]
 
@@ -454,7 +463,8 @@ class ActorControlTarget(Packet):
         LEIntField("param3", None),
         LEIntField("param4", None),
         LEIntField("padding1", None),
-        IEEEFloatField("TargetID", None)
+        IEEEFloatField("TargetID", None),  # wrong: should be a 8byte float
+        IEEEFloatField("TargetID2", None), # wrong: should be a 8byte float
     ]
 
 
@@ -478,6 +488,7 @@ class ActorControlSelf(Packet):
         LEIntField("Data6", None)
     ]
 
+
 class ActorControl(Packet):
     """[summary]
 
@@ -494,6 +505,25 @@ class ActorControl(Packet):
         LEIntField("Data2", None),
         LEIntField("Data3", None),
         LEIntField("Data4", None)
+    ]
+
+
+class EffectResult(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "EffectResult"
+    fields_desc = [
+        LEIntField("pad1", None),
+        LEShortField("pad2", None),
+        LEIntField("effects", None),
+        LEShortField("pad3", None),
+        LEIntField("pad4", None),
+        LEShortField("targetid", None),
+        LEIntField("pad5", None),
     ]
 
 
@@ -533,6 +563,31 @@ class UpdatePositionHandler(Packet):
         LEIntField("10", None)
     ]
 
+
+class Unknown(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "Unknown"
+    fields_desc = [
+        FieldListField("data", None, ByteField("", 0))
+    ]
+
+
+class NotImplemented(Packet):
+    """[summary]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "NotImplemented"
+    fields_desc = [
+        FieldListField("data", None, ByteField("", 0))
+    ]
 
 class IPC(Packet):
     """[IPC Opcode Multiplexer]
@@ -638,7 +693,7 @@ class FFXIV(Packet):
     Returns:
         [None]: [description]
     """
-    #pylint: disable=inconsistent-return-statements
+    # pylint: disable=inconsistent-return-statements
 
     name = "FFXIV"
     fields_desc = [
@@ -673,24 +728,26 @@ class FFXIV(Packet):
             [Packet]: [reassembled Packet]
         """
         #pylint: disable=unused-argument
-        if struct.unpack("<I", data[:4])[0] == 1101025874:
-            length = struct.unpack("<I", data[24:28])[0]
-            if len(data) == length:
-                return FFXIV(data)
-            elif len(data) > length:
-                #print(f"###### Got MORE then Expected: actual len: {len(data)} proposed bundle_len: {length} ######")
-                pkt = FFXIV(data)
+        # make sure it has magic1
+        if struct.unpack("<I", data[:4])[0] == 1101025874 or struct.unpack("<I", data[:4])[0] == 0:
+            length = struct.unpack("<I", data[24:28])[0]  # get bundle_len
+            if len(data) > length:  # got to much
+                # return ffxiv bundle up to bundle_len
+                pkt = FFXIV(data[:length])
                 if hasattr(pkt.payload, "tcp_reassemble"):
                     if pkt.payload.tcp_reassemble(data[length:], metadata):
                         return pkt
                 else:
                     return pkt
-            elif len(data) < length:  # not working
+            elif len(data) < length:  # got less, not working
                 print(
-                    f"###### Got LESS then Expected: actual len: {len(data)} proposed bundle_len: {length} ######")
+                    f"### Got LESS actual len: {len(data)} proposed bundle_len: {length} ###")
                 return None  # push rest back to queue
+            else:
+                return FFXIV(data)  # got exactly one bundle in one packet
         else:
-            return data  # void packet if not an FFXIV packet
+            return data  # void packet if not an FFXIV bundle
+
 
 bind_layers(TCP, FFXIV, sport=54993)
 bind_layers(TCP, FFXIV, dport=54993)
@@ -702,7 +759,6 @@ bind_layers(FFXIV, Segment)
 bind_layers(Segment, IPC, Type=3)
 bind_layers(Segment, ClientKeepAlive, Type=7)
 bind_layers(Segment, ServerKeepAlive, Type=8)
-
 # check for class existance and if implemented bind to IPC Layer
 for k, v in joined_list.items():
     try:
@@ -710,3 +766,8 @@ for k, v in joined_list.items():
         print(f"[+] Class {v} for Opcode {k} loaded...")
     except:
         print(f"[-] Class {v} for Opcode {k} not implemented.")
+        eval(f"bind_layers(IPC, NotImplemented, ipc_type={k})")
+
+
+for k in list(set(range(1, 1024)) - set(joined_list.keys())):
+    eval(f"bind_layers(IPC, Unknown, ipc_type={k})")
