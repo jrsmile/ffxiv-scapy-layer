@@ -32,6 +32,7 @@ pylint:
     paths:
       - ./pylint/
 pytest:
+  image: python:3.9
   stage: test
   script:
     - pytest --junitxml=report.xml
