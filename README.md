@@ -2,7 +2,7 @@
 
 Main File is ffxiv.py the layer that will end in scapys contrib folder.
 
-OpCodes are beeing fetched during runtime from: https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json
+OpCodes are beeing fetched during runtime from: https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/
 
 sample capture file is pcap.py currently configured for europe.
 
