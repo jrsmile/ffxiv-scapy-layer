@@ -31,6 +31,14 @@ pylint:
   artifacts:
     paths:
       - ./pylint/
+pytest:
+  stage: test
+  script:
+    - pytest --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
 release:
   image: node:14
   stage: release
