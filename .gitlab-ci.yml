@@ -14,6 +14,7 @@ include:
 - template: Security/SAST.gitlab-ci.yml
 python-safety:
   stage: test
+  needs: ["pytest"]
   image: pipelinecomponents/python-safety:latest
   script:
   - safety check --full-report -r requirements.txt
@@ -35,6 +36,7 @@ pylint:
 pytest:
   image: python:3.9
   stage: unittest
+  needs: ["pylint"]
   before_script:
     - pip install pytest
     - pip install -r requirements.txt
@@ -47,6 +49,7 @@ pytest:
 release:
   image: node:14
   stage: release
+  needs: ["pytest"]
   only:
     refs:
     - main
@@ -61,6 +64,7 @@ release:
 create-wiki:
   image: python:3.9
   stage: release
+  needs: ["pytest"]
   only:
     refs:
     - main
@@ -76,3 +80,4 @@ create-wiki:
       - ./docs/
 sast:
   stage: test
+  needs: ["pytest"]
