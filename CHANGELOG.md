@@ -1,3 +1,10 @@
+## [1.4.6](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.4.5...v1.4.6) (2021-09-20)
+
+
+### Bug Fixes
+
+* switched opcode fetch to cdn ([8537f92](https://s2.behead.de/git/ffxiv-scapy-layer/commit/8537f9273abf719c6efae98f8dd88b0161dc1c20))
+
 ## [1.4.5](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.4.4...v1.4.5) (2021-09-20)
 
 
