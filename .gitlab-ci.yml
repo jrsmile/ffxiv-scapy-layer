@@ -34,6 +34,9 @@ pylint:
 pytest:
   image: python:3.9
   stage: test
+  before_script:
+    - pip install pytest
+    - pip install -r requirements.txt
   script:
     - pytest --junitxml=report.xml
   artifacts:
