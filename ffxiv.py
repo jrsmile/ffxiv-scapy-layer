@@ -38,7 +38,7 @@ from scapy.fields import (
     IEEEDoubleField
 )
 from scapy.packet import Packet, bind_layers
-
+import scapy.packet
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen(
@@ -760,12 +760,11 @@ bind_layers(Segment, ServerKeepAlive, Type=8)
 # check for class existance and if implemented bind to IPC Layer
 for k, v in joined_list.items():
     try:
-        eval(f"bind_layers(IPC, {v}, ipc_type={k})")
+        bind_layers(IPC, globals()[f"{v}"], ipc_type=k)
         print(f"[+] Class {v} for Opcode {k} loaded...")
     except:
         print(f"[-] Class {v} for Opcode {k} not implemented.")
-        eval(f"bind_layers(IPC, OpcodeNotImplemented, ipc_type={k})")
-
+        bind_layers(IPC, OpcodeNotImplemented, ipc_type=k)
 
 for k in list(set(range(1, 1024)) - set(joined_list.keys())):
-    eval(f"bind_layers(IPC, Unknown, ipc_type={k})")
+    bind_layers(IPC, Unknown, ipc_type=k)
