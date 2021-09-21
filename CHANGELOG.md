@@ -1,3 +1,10 @@
+# [1.6.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.5.0...v1.6.0) (2021-09-21)
+
+
+### Features
+
+* Implemented ChatHandler ([682c1d9](https://s2.behead.de/git/ffxiv-scapy-layer/commit/682c1d9a247cfb1d7fef9b23f7a0a7b7bd541588))
+
 # [1.5.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.4.6...v1.5.0) (2021-09-21)
 
 
