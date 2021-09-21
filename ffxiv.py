@@ -43,7 +43,7 @@ from scapy.packet import Packet, bind_layers
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen(
-    "https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json"
+    "https://cdn.jsdelivr.net/gh/karashiiro/FFXIVOpcodes@latest/opcodes.min.json"
 ) as url:
     opcodes = json.loads(url.read().decode())
 
