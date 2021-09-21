@@ -1,3 +1,10 @@
+# [1.5.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.4.6...v1.5.0) (2021-09-21)
+
+
+### Features
+
+* added first pytest cases ([6760a4b](https://s2.behead.de/git/ffxiv-scapy-layer/commit/6760a4bb82748447ab36c9a0ac1af8433635c5e1))
+
 ## [1.4.6](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.4.5...v1.4.6) (2021-09-20)
 
 
