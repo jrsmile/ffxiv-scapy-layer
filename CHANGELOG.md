@@ -1,3 +1,10 @@
+## [1.6.1](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.6.0...v1.6.1) (2021-09-21)
+
+
+### Bug Fixes
+
+* removed all evals ([7a5c65d](https://s2.behead.de/git/ffxiv-scapy-layer/commit/7a5c65d2879a27f9ea4c368a0c0ff887e3439a82))
+
 # [1.6.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.5.0...v1.6.0) (2021-09-21)
 
 
