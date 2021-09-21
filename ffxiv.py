@@ -13,8 +13,6 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 """
 
 
-from time import thread_time_ns
-from typing import Any
 import urllib.request
 import json
 import struct
@@ -559,14 +557,14 @@ class Unknown(Packet):
     ]
 
 
-class NotImplemented(Packet):
+class OpcodeNotImplemented(Packet):
     """[all known opcodes that are not yet implemented]
 
     Args:
         Packet ([type]): [description]
     """
 
-    name = "NotImplemented"
+    name = "OpcodeNotImplemented"
     fields_desc = [
         FieldListField("data", None, ByteField("", 0))
     ]
@@ -750,7 +748,7 @@ for k, v in joined_list.items():
         print(f"[+] Class {v} for Opcode {k} loaded...")
     except:
         print(f"[-] Class {v} for Opcode {k} not implemented.")
-        eval(f"bind_layers(IPC, NotImplemented, ipc_type={k})")
+        eval(f"bind_layers(IPC, OpcodeNotImplemented, ipc_type={k})")
 
 
 for k in list(set(range(1, 1024)) - set(joined_list.keys())):
