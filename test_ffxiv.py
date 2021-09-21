@@ -25,7 +25,7 @@ def test_all_opcodes_implemented(test_traffic):
     for packet in test_traffic:
         packet.show()
         # Assert
-        assert not packet.haslayer("NotImplemented")
+        assert not packet.haslayer("OpcodeNotImplemented")
 
 
 @pytest.mark.xfail(reason="many OPCodes unknown")
