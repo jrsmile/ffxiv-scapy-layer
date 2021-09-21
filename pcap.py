@@ -97,11 +97,11 @@ def poll_packet_queue(token: str):
             #    posZ = raw_packet["FFXIV_UpdatePositionHandler"].z
             #    print(f"X: {posX} Y: {posY} Z: {posZ}")
 
-            # if raw_packet.haslayer(IPC) and not raw_packet.haslayer(Raw):
-            #    result = f"{raw_packet.show(dump=True)}"
-            #    for item in result.split("\n"):
-            #        if "ipc_type" in item:
-            #            print(item.strip())
+            if raw_packet.haslayer(IPC) and not raw_packet.haslayer(Raw):
+                result = f"{raw_packet.show(dump=True)}"
+                for item in result.split("\n"):
+                    if "ipc_type" in item:
+                        print(item.strip())
 
             # if raw_packet.haslayer(ServerKeepAlive) or raw_packet.haslayer(ClientKeepAlive):
             #    print("KeepAlive")

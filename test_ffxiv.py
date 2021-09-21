@@ -1,30 +1,37 @@
-# contents of test_append.py
 import pytest
-
-
-# Arrange
-@pytest.fixture
-def first_entry():
-    return "a"
-
+from scapy.all import *
+from ffxiv import *
 
 # Arrange
+
+
 @pytest.fixture
-def order(first_entry):
-    return [first_entry]
+def test_traffic():
+    packets = rdpcap('IPCs.pcap')
+    return packets
 
 
-def test_string(order):
+def test_no_raw(test_traffic):
     # Act
-    order.append("b")
+    for packet in test_traffic:
+        packet.show()
+        # Assert
+        assert not packet.haslayer("raw")
 
-    # Assert
-    assert order == ["a", "b"]
 
-
-def test_int(order):
+@pytest.mark.xfail(reason="not done yet")
+def test_all_opcodes_implemented(test_traffic):
     # Act
-    order.append(2)
+    for packet in test_traffic:
+        packet.show()
+        # Assert
+        assert not packet.haslayer("NotImplemented")
 
-    # Assert
-    assert order == ["a", 2]
+
+@pytest.mark.xfail(reason="many OPCodes unknown")
+def test_all_opcodes_known(test_traffic):
+    # Act
+    for packet in test_traffic:
+        packet.show()
+        # Assert
+        assert not packet.haslayer("Unknown")

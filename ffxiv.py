@@ -13,6 +13,7 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 """
 
 
+from time import thread_time_ns
 from typing import Any
 import urllib.request
 import json
@@ -464,7 +465,7 @@ class ActorControlTarget(Packet):
         LEIntField("param4", None),
         LEIntField("padding1", None),
         IEEEFloatField("TargetID", None),  # wrong: should be a 8byte float
-        IEEEFloatField("TargetID2", None), # wrong: should be a 8byte float
+        IEEEFloatField("TargetID2", None),  # wrong: should be a 8byte float
     ]
 
 
@@ -508,25 +509,6 @@ class ActorControl(Packet):
     ]
 
 
-class EffectResult(Packet):
-    """[summary]
-
-    Args:
-        Packet ([type]): [description]
-    """
-
-    name = "EffectResult"
-    fields_desc = [
-        LEIntField("pad1", None),
-        LEShortField("pad2", None),
-        LEIntField("effects", None),
-        LEShortField("pad3", None),
-        LEIntField("pad4", None),
-        LEShortField("targetid", None),
-        LEIntField("pad5", None),
-    ]
-
-
 class UpdateHpMpTp(Packet):
     """[summary]
 
@@ -565,7 +547,7 @@ class UpdatePositionHandler(Packet):
 
 
 class Unknown(Packet):
-    """[summary]
+    """[all unknown opcodes]
 
     Args:
         Packet ([type]): [description]
@@ -578,7 +560,7 @@ class Unknown(Packet):
 
 
 class NotImplemented(Packet):
-    """[summary]
+    """[all known opcodes that are not yet implemented]
 
     Args:
         Packet ([type]): [description]
@@ -588,6 +570,7 @@ class NotImplemented(Packet):
     fields_desc = [
         FieldListField("data", None, ByteField("", 0))
     ]
+
 
 class IPC(Packet):
     """[IPC Opcode Multiplexer]
@@ -728,9 +711,10 @@ class FFXIV(Packet):
             [Packet]: [reassembled Packet]
         """
         #pylint: disable=unused-argument
-        # make sure it has magic1
         if struct.unpack("<I", data[:4])[0] == 1101025874 or struct.unpack("<I", data[:4])[0] == 0:
             length = struct.unpack("<I", data[24:28])[0]  # get bundle_len
+            if length > 10000:  # desaaster containment, not good.
+                length = 64
             if len(data) > length:  # got to much
                 # return ffxiv bundle up to bundle_len
                 pkt = FFXIV(data[:length])
