@@ -12,7 +12,7 @@ from scapy.layers.inet import IP, TCP
 from scapy.packet import Raw
 from scapy.utils import wrpcap
 
-from ffxiv import IPC, FFXIV, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive
+from ffxiv import IPC, FFXIV, ChatHandler, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -103,6 +103,9 @@ def poll_packet_queue(token: str):
                     if "ipc_type" in item:
                         print(item.strip())
 
+                    if "Message" in item:
+                        print(item.strip())
+
             # if raw_packet.haslayer(ServerKeepAlive) or raw_packet.haslayer(ClientKeepAlive):
             #    print("KeepAlive")
 
@@ -124,7 +127,7 @@ if __name__ == "__main__":
 
     log.info(f"Sniffing packets... Ctrl + C to stop sniffing")
     sniff(
-        filter="tcp and net (195.82.50.0/24 or 204.2.229.0/24 or 124.150.157.0/24)",
+        filter="(tcp or udp) and net (195.82.50.0/24 or 204.2.229.0/24 or 124.150.157.0/24)",
         prn=add_packet_to_queue,
         store=0,
         session=TCPSession,

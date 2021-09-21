@@ -34,7 +34,8 @@ from scapy.fields import (
     XByteField,
     ConditionalField,
     StrFixedLenField,
-    FieldListField
+    FieldListField,
+    IEEEDoubleField
 )
 from scapy.packet import Packet, bind_layers
 
@@ -73,6 +74,22 @@ with urllib.request.urlopen(
         ServerZoneIpcType | ServerLobbyIpcType | ClientZoneIpcType | ClientLobbyIpcType
     )
 
+
+class ChatHandler(Packet):
+    """[ChatHandler]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "ChatHandler"
+    fields_desc = [
+        IEEEDoubleField("ContentID", None),
+        LEShortField("WorldID", None),
+        ByteField("flags", None),
+        StrFixedLenField("Username", None, length=15),
+        StrFixedLenField("Message", None, length=1030),
+    ]
 
 class InitZone(Packet):
     """[InitZone]
@@ -462,8 +479,7 @@ class ActorControlTarget(Packet):
         LEIntField("param3", None),
         LEIntField("param4", None),
         LEIntField("padding1", None),
-        IEEEFloatField("TargetID", None),  # wrong: should be a 8byte float
-        IEEEFloatField("TargetID2", None),  # wrong: should be a 8byte float
+        IEEEDoubleField("TargetID", None),
     ]
 
 
