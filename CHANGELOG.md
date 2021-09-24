@@ -1,3 +1,10 @@
+## [1.6.2](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.6.1...v1.6.2) (2021-09-24)
+
+
+### Bug Fixes
+
+* ffxiv packet detection ([7966b5f](https://s2.behead.de/git/ffxiv-scapy-layer/commit/7966b5fa25be87de08648d761cae8edb6f8e1168))
+
 ## [1.6.1](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.6.0...v1.6.1) (2021-09-21)
 
 
