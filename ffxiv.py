@@ -91,6 +91,7 @@ class ChatHandler(Packet):
         StrFixedLenField("Message", None, length=1030),
     ]
 
+
 class InitZone(Packet):
     """[InitZone]
 
@@ -725,34 +726,28 @@ class FFXIV(Packet):
             [Packet]: [reassembled Packet]
         """
         #pylint: disable=unused-argument
-        if struct.unpack("<I", data[:4])[0] == 1101025874 or struct.unpack("<I", data[:4])[0] == 0:
+        if struct.unpack("<I", data[:4])[0] == 1101025874 or (struct.unpack("<I", data[:4])[0] == 0 and struct.unpack("<I", data[4:8])[0] == 0 and struct.unpack("<I", data[8:12])[0] == 0 and struct.unpack("<I", data[12:16])[0] == 0):
             length = struct.unpack("<I", data[24:28])[0]  # get bundle_len
             if length > 10000:  # desaaster containment, not good.
                 length = 64
             if len(data) > length:  # got to much
                 # return ffxiv bundle up to bundle_len
                 pkt = FFXIV(data[:length])
-                if hasattr(pkt.payload, "tcp_reassemble"):
-                    if pkt.payload.tcp_reassemble(data[length:], metadata):
-                        return pkt
-                else:
-                    return pkt
+                print(
+                    f"### Got MORE actual len: {len(data)} proposed bundle_len: {length} ###")
+                return pkt
             elif len(data) < length:  # got less, not working
                 print(
                     f"### Got LESS actual len: {len(data)} proposed bundle_len: {length} ###")
                 return None  # push rest back to queue
             else:
+                # print(f"### Got ENOU actual len: {len(data)} proposed bundle_len: {length} ###")
                 return FFXIV(data)  # got exactly one bundle in one packet
         else:
             return data  # void packet if not an FFXIV bundle
 
 
-bind_layers(TCP, FFXIV, sport=54993)
-bind_layers(TCP, FFXIV, dport=54993)
-bind_layers(TCP, FFXIV, sport=54993, dport=54993)
-bind_layers(TCP, FFXIV, sport=54994)
-bind_layers(TCP, FFXIV, dport=54994)
-bind_layers(TCP, FFXIV, sport=54994, dport=54994)
+bind_layers(TCP, FFXIV)
 bind_layers(FFXIV, Segment)
 bind_layers(Segment, IPC, Type=3)
 bind_layers(Segment, ClientKeepAlive, Type=7)
