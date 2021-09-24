@@ -75,6 +75,40 @@ with urllib.request.urlopen(
     )
 
 
+class Whisper(Packet):
+    """[Whisper]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "Whisper"
+    fields_desc = [
+        #IEEEDoubleField("ContentID", None),
+        #LEShortField("WorldID", None),
+        #ByteField("flags", None),
+        StrFixedLenField("Unknown", None, length=51),
+        StrFixedLenField("Message", None, length=1024),
+        StrFixedLenField("Unknown2", None, length=5),
+    ]
+
+
+class GroupMessage(Packet):
+    """[GroupMessage]
+
+    Args:
+        Packet ([type]): [description]
+    """
+
+    name = "GroupMessage"
+    fields_desc = [
+        #IEEEDoubleField("ContentID", None),
+        #LEShortField("WorldID", None),
+        #ByteField("flags", None),
+        StrFixedLenField("Username", None, length=8),
+        StrFixedLenField("Message", None, length=1049),
+    ]
+
 class ChatHandler(Packet):
     """[ChatHandler]
 
@@ -728,14 +762,12 @@ class FFXIV(Packet):
         #pylint: disable=unused-argument
         if struct.unpack("<I", data[:4])[0] == 1101025874 or (struct.unpack("<I", data[:4])[0] == 0 and struct.unpack("<I", data[4:8])[0] == 0 and struct.unpack("<I", data[8:12])[0] == 0 and struct.unpack("<I", data[12:16])[0] == 0):
             length = struct.unpack("<I", data[24:28])[0]  # get bundle_len
-            if length > 10000:  # desaaster containment, not good.
-                length = 64
             if len(data) > length:  # got to much
                 # return ffxiv bundle up to bundle_len
-                pkt = FFXIV(data[:length])
+                pkt = data[:length]
                 print(
                     f"### Got MORE actual len: {len(data)} proposed bundle_len: {length} ###")
-                return pkt
+                return FFXIV(pkt)
             elif len(data) < length:  # got less, not working
                 print(
                     f"### Got LESS actual len: {len(data)} proposed bundle_len: {length} ###")
@@ -752,6 +784,8 @@ bind_layers(FFXIV, Segment)
 bind_layers(Segment, IPC, Type=3)
 bind_layers(Segment, ClientKeepAlive, Type=7)
 bind_layers(Segment, ServerKeepAlive, Type=8)
+bind_layers(IPC, GroupMessage, ipc_type=101)
+bind_layers(IPC, Whisper, ipc_type=100)
 # check for class existance and if implemented bind to IPC Layer
 for k, v in joined_list.items():
     try:
