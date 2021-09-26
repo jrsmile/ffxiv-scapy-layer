@@ -1,3 +1,10 @@
+# [1.7.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.6.2...v1.7.0) (2021-09-24)
+
+
+### Features
+
+* added rudimentary group and whisper parser ([66df951](https://s2.behead.de/git/ffxiv-scapy-layer/commit/66df9518335a4bf6ddf3d70af6c947ee3006a3b3))
+
 ## [1.6.2](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.6.1...v1.6.2) (2021-09-24)
 
 
