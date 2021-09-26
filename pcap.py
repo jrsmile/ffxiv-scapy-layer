@@ -9,7 +9,6 @@ from threading import Thread
 from scapy.all import sniff, Packet, TCPSession, conf
 from scapy.layers.l2 import Ether
 from scapy.layers.inet import IP, TCP
-from scapy.packet import Raw
 from scapy.utils import wrpcap
 
 from ffxiv import IPC, FFXIV, ChatHandler, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive
@@ -80,7 +79,7 @@ def poll_packet_queue(token: str):
 
         raw_packet = packets.popleft()
         try:
-            # print(f"{raw_packet.summary()}")
+            print(f"{raw_packet.summary()}")
             if raw_packet.haslayer(IPC) and (raw_packet[IPC].ipc_magic == 0x14):
                 # other magic types are possibly TLS encrypted
                 if raw_packet[IPC].ipc_type in joined_list.keys():
@@ -97,20 +96,23 @@ def poll_packet_queue(token: str):
             #    posZ = raw_packet["FFXIV_UpdatePositionHandler"].z
             #    print(f"X: {posX} Y: {posY} Z: {posZ}")
 
-            if raw_packet.haslayer(IPC) and not raw_packet.haslayer(Raw):
-                result = f"{raw_packet.show(dump=True)}"
-                for item in result.split("\n"):
-                    if "ipc_type" in item:
-                        print(item.strip())
+            #if raw_packet.haslayer(IPC) and not raw_packet.haslayer(Raw):
+            #    result = f"{raw_packet.show(dump=True)}"
+            #    for item in result.split("\n"):
+            #        if "ipc_type" in item:
+            #            print(item.strip())
 
-                    if "Message" in item:
-                        print(item.strip())
+            #        if "Message" in item:
+            #            print(item.strip())
 
-            # if raw_packet.haslayer(ServerKeepAlive) or raw_packet.haslayer(ClientKeepAlive):
-            #    print("KeepAlive")
+            #if not raw_packet.haslayer(FFXIV):
+            #    if not raw_packet[TCP].flags == "A":
+            #        print(f"{raw_packet.summary()}")
 
-            if raw_packet.haslayer(Raw):
-                raw_packet.show()
+            #if raw_packet.haslayer(FFXIV) and raw_packet[FFXIV].compressed:
+            #    print(
+            #        "###############################################################################")
+            #    print(bytes(raw_packet[FFXIV].payload))
 
         except:
             log.exception(f"Failed to parse: {raw_packet.summary()}")

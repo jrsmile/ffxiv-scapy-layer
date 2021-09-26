@@ -12,10 +12,14 @@
 FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 """
 
-
+import zlib
+import base64
 import urllib.request
 import json
 import struct
+from scapy.compat import base64_bytes, bytes_base64
+import ffxiv_deflate
+from importlib import reload
 
 # from scapy.all import *
 from scapy.layers.inet import TCP
@@ -37,7 +41,7 @@ from scapy.fields import (
     FieldListField,
     IEEEDoubleField
 )
-from scapy.packet import Packet, bind_layers
+from scapy.packet import Packet, bind_layers, raw
 import scapy.packet
 
 # generate enum lists for FFXIV_IPC Types
@@ -75,6 +79,28 @@ with urllib.request.urlopen(
     )
 
 
+class SystemLogMessage(Packet):
+    """[SystemLogMessage]
+
+    Args:
+        Packet ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    name = "SystemLogMessage"
+    fields_desc = [
+        #IEEEDoubleField("ContentID", None),
+        #LEShortField("WorldID", None),
+        #ByteField("flags", None),
+        StrFixedLenField("MessageHeader", None, length=32),
+        LEIntField("Unknown1", None),
+        LEIntField("logmessageid", None),
+        LEIntField("param1", None),
+        LEIntField("param2", None),
+        LEIntField("param3", None),
+        LEIntField("padding1", None),
+    ]
 class Whisper(Packet):
     """[Whisper]
 
@@ -747,6 +773,27 @@ class FFXIV(Packet):
                         count_from=lambda pkt: pkt.msg_count),
     ]
 
+    def mysummary(self):
+        if self.haslayer(IPC):
+            ipc_type = f"{self[IPC].ipc_type}"
+            if self[IPC].ipc_type in joined_list.keys():
+                return self.sprintf("FFXIV Bundle Length: %FFXIV.bundle_len% IPC Type: " + ipc_type + " " + joined_list[self[IPC].ipc_type])
+            else:
+                return self.sprintf("FFXIV Bundle Length: %FFXIV.bundle_len% IPC Type: " + ipc_type)
+        else:
+            return self.sprintf("FFXIV Bundle Length: %FFXIV.bundle_len%")
+
+    def extract_padding(self, s):
+        """[the key to multi segments in one bundle]
+
+        Args:
+            s ([Packet]): [the stripped packed from FFXIV Base Class]
+
+        Returns:
+            [Packet]: [Returns the packet but does not consumes the rest of the incomming packet.]
+        """
+        return "", s
+
     @classmethod
     def tcp_reassemble(cls, data, metadata):
         """[called by sniff(session=TCPSession),
@@ -762,18 +809,27 @@ class FFXIV(Packet):
         #pylint: disable=unused-argument
         if struct.unpack("<I", data[:4])[0] == 1101025874 or (struct.unpack("<I", data[:4])[0] == 0 and struct.unpack("<I", data[4:8])[0] == 0 and struct.unpack("<I", data[8:12])[0] == 0 and struct.unpack("<I", data[12:16])[0] == 0):
             length = struct.unpack("<I", data[24:28])[0]  # get bundle_len
+            fragment = FFXIV(data)
+            if fragment.compressed:
+                # data after header, was zlib compressed
+                #print("########### DECOMPRESSING ################")
+                try:
+                    #reload(ffxiv_deflate)
+                    data = ffxiv_deflate.deflate(data, fragment.bundle_len)
+                except Exception as e:
+                    print(e)
+                    #print("########### FAILED #############")
+
             if len(data) > length:  # got to much
                 # return ffxiv bundle up to bundle_len
                 pkt = data[:length]
-                print(
-                    f"### Got MORE actual len: {len(data)} proposed bundle_len: {length} ###")
+                #print(                    f"### Got MORE actual len: {len(data)} proposed bundle_len: {length} ###")
                 return FFXIV(pkt)
             elif len(data) < length:  # got less, not working
-                print(
-                    f"### Got LESS actual len: {len(data)} proposed bundle_len: {length} ###")
+                #print(                    f"### Got LESS actual len: {len(data)} proposed bundle_len: {length} ###")
                 return None  # push rest back to queue
             else:
-                # print(f"### Got ENOU actual len: {len(data)} proposed bundle_len: {length} ###")
+                #print(                    f"### Got ENOU actual len: {len(data)} proposed bundle_len: {length} ###")
                 return FFXIV(data)  # got exactly one bundle in one packet
         else:
             return data  # void packet if not an FFXIV bundle
@@ -786,13 +842,14 @@ bind_layers(Segment, ClientKeepAlive, Type=7)
 bind_layers(Segment, ServerKeepAlive, Type=8)
 bind_layers(IPC, GroupMessage, ipc_type=101)
 bind_layers(IPC, Whisper, ipc_type=100)
+bind_layers(IPC, SystemLogMessage, ipc_type=989)
 # check for class existance and if implemented bind to IPC Layer
 for k, v in joined_list.items():
     try:
         bind_layers(IPC, globals()[f"{v}"], ipc_type=k)
-        print(f"[+] Class {v} for Opcode {k} loaded...")
+        #print(f"[+] Class {v} for Opcode {k} loaded...")
     except:
-        print(f"[-] Class {v} for Opcode {k} not implemented.")
+        #print(f"[-] Class {v} for Opcode {k} not implemented.")
         bind_layers(IPC, OpcodeNotImplemented, ipc_type=k)
 
 for k in list(set(range(1, 1024)) - set(joined_list.keys())):
