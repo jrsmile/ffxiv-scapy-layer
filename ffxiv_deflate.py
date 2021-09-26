@@ -10,7 +10,7 @@ def deflate(fragment, len):
     # s2BgYNi9o0RgroeHADOQLcKwAUgyMyxf458IZDDoMNqs4AbS74H4GwMCLGBE11eCoo9XVJRBDagGhLcAIYPK5bdI2h+MMDZdgXA9AwMAK78lhA==
     #print(raw(fragment)[40:].hex())  # with zlib header
     b64 = bytes_base64(raw(fragment)[42:])  # without header in base64
-    print(f"COMPRESSED bundle_len: {len} {b64}")
+    print(f"\nCOMPRESSED bundle_len: {len} {b64}\n")
     inflated = zlib.decompress(b64, -15)
     #print(inflated)
     restored_fragment = fragment[:42] + inflated
