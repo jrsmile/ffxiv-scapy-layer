@@ -13,12 +13,10 @@ FFXVI (Final Fantasy 14 Packet Bundle 5.58).
 """
 
 import zlib
-import base64
 import urllib.request
 import json
 import struct
 from scapy.compat import base64_bytes, bytes_base64
-import ffxiv_deflate
 from importlib import reload
 
 # from scapy.all import *
@@ -811,14 +809,22 @@ class FFXIV(Packet):
             length = struct.unpack("<I", data[24:28])[0]  # get bundle_len
             fragment = FFXIV(data)
             if fragment.compressed:
-                # data after header, was zlib compressed
-                #print("########### DECOMPRESSING ################")
+                # data after header, was deflate compressed
+                print("\n########### DECOMPRESSING ################")
                 try:
-                    #reload(ffxiv_deflate)
-                    data = ffxiv_deflate.deflate(data, fragment.bundle_len)
+                    data_len = len(data)
+                    # without 40 bit ffxiv bundle header and 2 bit deflate header
+                    inflated = zlib.decompress(
+                        bytes_base64(data[40:]), -zlib.MAX_WBITS)
+                    # rejoin data with inflated segments omitting the deflate header
+                    data = b"".join([data[:42], inflated])
+                    data_len2 = len(data)
+                    print(
+                        f"##########SUCCESS, inflated from {data_len} to {data_len2} #######")
                 except Exception as e:
                     print(e)
-                    #print("########### FAILED #############")
+                    print("########### FAILED #############\n")
+                    return data  # void packet if inflate error
 
             if len(data) > length:  # got to much
                 # return ffxiv bundle up to bundle_len
