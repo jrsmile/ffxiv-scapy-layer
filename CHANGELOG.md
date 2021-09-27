@@ -1,3 +1,10 @@
+# [1.9.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.8.0...v1.9.0) (2021-09-27)
+
+
+### Features
+
+* working deflate of segments ([f79d3bb](https://s2.behead.de/git/ffxiv-scapy-layer/commit/f79d3bbf19a0d6ea4c5c62d812d315fba96e330c))
+
 # [1.8.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.7.0...v1.8.0) (2021-09-26)
 
 
