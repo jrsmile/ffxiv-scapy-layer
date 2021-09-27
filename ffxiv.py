@@ -810,20 +810,14 @@ class FFXIV(Packet):
             fragment = FFXIV(data)
             if fragment.compressed:
                 # data after header, was deflate compressed
-                print("\n########### DECOMPRESSING ################")
                 try:
-                    data_len = len(data)
-                    # without 40 bit ffxiv bundle header and 2 bit deflate header
+                    # without 40 bit ffxiv bundle header, with 2 bit deflate header
                     inflated = zlib.decompress(
                         bytes_base64(data[40:]), -zlib.MAX_WBITS)
                     # rejoin data with inflated segments omitting the deflate header
-                    data = b"".join([data[:42], inflated])
-                    data_len2 = len(data)
-                    print(
-                        f"##########SUCCESS, inflated from {data_len} to {data_len2} #######")
+                    data = b"".join([data[:40], inflated])
                 except Exception as e:
                     print(e)
-                    print("########### FAILED #############\n")
                     return data  # void packet if inflate error
 
             if len(data) > length:  # got to much
