@@ -1,3 +1,15 @@
+# [1.8.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.7.0...v1.8.0) (2021-09-26)
+
+
+### Bug Fixes
+
+* added sample data to test without game ([525e160](https://s2.behead.de/git/ffxiv-scapy-layer/commit/525e160e0386311700f039248ed348fa763f4981))
+
+
+### Features
+
+* deflate test ([3f422a6](https://s2.behead.de/git/ffxiv-scapy-layer/commit/3f422a6e82b0339ed0fa00691457d5156fbf9169))
+
 # [1.7.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.6.2...v1.7.0) (2021-09-24)
 
 
