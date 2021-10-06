@@ -48,6 +48,9 @@ Schneier and more details about it can be found at
 
                 _p[i] ^= w | x | y | z;
             }
+Usage described here: https://pypi.org/project/blowfish/
+working c# implementation: https://github.com/goatcorp/FFXIVQuickLauncher/blob/master/src/XIVLauncher/Encryption/Blowfish.cs
+description of broken implementation: https://github.com/Jadd/MoogleBot/blob/master/MoogleBot.Runtime/Cryptography/Blowfish.cs
 
 """
 
