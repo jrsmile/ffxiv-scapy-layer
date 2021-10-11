@@ -12,6 +12,7 @@ from scapy.layers.inet import IP, TCP
 from scapy.layers.tls.all import *
 from scapy.utils import wrpcap
 from ffxiv import IPC, FFXIV, ChatHandler, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive, ActorControlSelf, UpdateHpMpTp
+from ffxiv_session import FFXIVSession
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())

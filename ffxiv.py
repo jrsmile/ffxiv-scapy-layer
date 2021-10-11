@@ -18,6 +18,7 @@ import json
 import struct
 from scapy.compat import base64_bytes, bytes_base64
 from importlib import reload
+from ffxiv_session import FFXIVSession
 
 # from scapy.all import *
 from scapy.layers.inet import TCP

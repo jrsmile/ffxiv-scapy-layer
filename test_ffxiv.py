@@ -1,6 +1,7 @@
 import pytest
 from scapy.all import *
 from ffxiv import *
+import ffxiv_session
 
 # Arrange
 

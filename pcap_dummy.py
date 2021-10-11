@@ -12,6 +12,7 @@ from scapy.layers.inet import IP, TCP
 from scapy.layers.tls.all import *
 from scapy.utils import wrpcap
 from ffxiv import IPC, FFXIV, ChatHandler, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive
+from ffxiv_session import FFXIVSession
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -137,7 +138,7 @@ if __name__ == "__main__":
         #filter="(tcp or udp) and net (195.82.50.0/24 or 204.2.229.0/24 or 124.150.157.0/24)",
         prn=add_packet_to_queue,
         store=0,
-        session=TCPSession,
+        session=FFXIVSession,
     )
     # 195.82.50.0/24 Europe
     # 204.2.229.0/24 NA
