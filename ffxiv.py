@@ -817,7 +817,7 @@ class FFXIV(Packet):
                     # rejoin data with inflated segments omitting the deflate header
                     data = b"".join([data[:40], inflated])
                 except Exception as e:
-                    print(e)
+                    print("\n" + F"{e}")
                     return data  # void packet if inflate error
 
             if len(data) > length:  # got to much

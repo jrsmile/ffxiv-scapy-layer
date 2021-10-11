@@ -11,7 +11,7 @@ from scapy.layers.l2 import Ether
 from scapy.layers.inet import IP, TCP
 from scapy.layers.tls.all import *
 from scapy.utils import wrpcap
-from ffxiv import IPC, FFXIV, ChatHandler, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive
+from ffxiv import IPC, FFXIV, ChatHandler, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive, ActorControlSelf, UpdateHpMpTp
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -79,7 +79,7 @@ def poll_packet_queue(token: str):
 
         raw_packet = packets.popleft()
         try:
-            print(f"{raw_packet.summary()}")
+            #print(f"{raw_packet.summary()}")
             '''
             if raw_packet.haslayer(IPC) and (raw_packet[IPC].ipc_magic == 0x14):
                 # other magic types are possibly TLS encrypted
@@ -91,8 +91,8 @@ def poll_packet_queue(token: str):
                     raw_packet[IPC].pdfdump(pdfpath)
                     wrpcap('IPCs.pcap', raw_packet, append=True)
             '''
-            if raw_packet.haslayer(TLS):
-                raw_packet.show()
+            if not (raw_packet.haslayer(ActorControlSelf) or raw_packet.haslayer(UpdateHpMpTp) or raw_packet[TCP].flags == 'A'):
+                print(f"{raw_packet.summary()}")
             # if raw_packet.haslayer(FFXIV_UpdatePositionHandler): # and raw_packet[FFXIV].msg_count > 1:
             #    posX = raw_packet["FFXIV_UpdatePositionHandler"].x
             #    posY = raw_packet["FFXIV_UpdatePositionHandler"].y
@@ -123,7 +123,8 @@ def poll_packet_queue(token: str):
 
 
 if __name__ == "__main__":
-    log.setLevel(logging.DEBUG)
+    logger = logging.getLogger("scapy")
+    logger.setLevel(logging.DEBUG)
 
     thread = Thread(target=partial(poll_packet_queue, token=""))
     thread.setDaemon(True)
