@@ -812,10 +812,10 @@ class FFXIV(Packet):
                 # data after header, was deflate compressed
                 try:
                     # without 40 bit ffxiv bundle header, with 2 bit deflate header
-                    inflated = zlib.decompress(
-                        data[42:length], -zlib.MAX_WBITS)
-                    # rejoin data with inflated segments omitting the deflate header
                     print(str(len(data)) + " ", end='')
+                    inflated = zlib.decompress(
+                        data[42:length], -zlib.MAX_WBITS, length)
+                    # rejoin data with inflated segments omitting the deflate header
                     data = b"".join([data[:40], inflated])
                     print(str(len(data)) + "")
                 except Exception as e:
