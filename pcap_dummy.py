@@ -112,10 +112,10 @@ def poll_packet_queue(token: str):
             #    if not raw_packet[TCP].flags == "A":
             #        print(f"{raw_packet.summary()}")
 
-            #if raw_packet.haslayer(FFXIV) and raw_packet[FFXIV].compressed:
+            if raw_packet.haslayer(FFXIV) and raw_packet[FFXIV].compressed:
             #    print(
             #        "###############################################################################")
-            #    raw_packet.show()
+                raw_packet.show()
 
         except:
             log.exception(f"Failed to parse: {raw_packet.summary()}")

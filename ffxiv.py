@@ -813,16 +813,18 @@ class FFXIV(Packet):
                 try:
                     # without 40 bit ffxiv bundle header, with 2 bit deflate header
                     inflated = zlib.decompress(
-                        bytes_base64(data[40:]), -zlib.MAX_WBITS)
+                        data[42:length], -zlib.MAX_WBITS)
                     # rejoin data with inflated segments omitting the deflate header
+                    print(str(len(data)) + " ", end='')
                     data = b"".join([data[:40], inflated])
+                    print(str(len(data)) + "")
                 except Exception as e:
                     print("\n" + F"{e}")
                     return data  # void packet if inflate error
 
             if len(data) > length:  # got to much
                 # return ffxiv bundle up to bundle_len
-                pkt = data[:length]
+                pkt = data
                 #print(                    f"### Got MORE actual len: {len(data)} proposed bundle_len: {length} ###")
                 return FFXIV(pkt)
             elif len(data) < length:  # got less, not working

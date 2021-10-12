@@ -80,7 +80,7 @@ def poll_packet_queue(token: str):
         raw_packet = packets.popleft()
         try:
             #print(f"{raw_packet.summary()}")
-            '''
+
             if raw_packet.haslayer(IPC) and (raw_packet[IPC].ipc_magic == 0x14):
                 # other magic types are possibly TLS encrypted
                 if raw_packet[IPC].ipc_type in joined_list.keys():
@@ -90,7 +90,7 @@ def poll_packet_queue(token: str):
                 if not os.path.isfile(pdfpath):
                     raw_packet[IPC].pdfdump(pdfpath)
                     wrpcap('IPCs.pcap', raw_packet, append=True)
-            '''
+
             if not (raw_packet.haslayer(ActorControlSelf) or raw_packet.haslayer(UpdateHpMpTp) or raw_packet[TCP].flags == 'A'):
                 print(f"{raw_packet.summary()}")
             # if raw_packet.haslayer(FFXIV_UpdatePositionHandler): # and raw_packet[FFXIV].msg_count > 1:
@@ -115,7 +115,7 @@ def poll_packet_queue(token: str):
             #if raw_packet.haslayer(FFXIV) and raw_packet[FFXIV].compressed:
             #    print(
             #        "###############################################################################")
-            #    print(bytes(raw_packet[FFXIV].payload))
+            #    raw_packet.show()
 
         except:
             log.exception(f"Failed to parse: {raw_packet.summary()}")
