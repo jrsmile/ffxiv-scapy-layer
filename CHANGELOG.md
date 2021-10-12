@@ -1,3 +1,10 @@
+# [1.10.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.9.0...v1.10.0) (2021-10-12)
+
+
+### Features
+
+* working stream decompression ([033a208](https://s2.behead.de/git/ffxiv-scapy-layer/commit/033a2084e20eda056632d6027346acb57071a158))
+
 # [1.9.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.8.0...v1.9.0) (2021-09-27)
 
 
