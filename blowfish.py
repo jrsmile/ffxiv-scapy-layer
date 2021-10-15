@@ -51,7 +51,8 @@ Schneier and more details about it can be found at
 Usage described here: https://pypi.org/project/blowfish/
 working c# implementation: https://github.com/goatcorp/FFXIVQuickLauncher/blob/master/src/XIVLauncher/Encryption/Blowfish.cs
 description of broken implementation: https://github.com/Jadd/MoogleBot/blob/master/MoogleBot.Runtime/Cryptography/Blowfish.cs
-
+https://xiv.dev/network/packet-structure
+https://blog.sudeium.com/2021/01/11/launching-final-fantasy-xiv-on-macos/
 """
 
 from struct import Struct, error as struct_error
