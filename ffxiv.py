@@ -685,6 +685,27 @@ class ServerKeepAlive(Packet):
     fields_desc = [LEIntField("ID", None), LEIntField("Epoch", None)]
 
 
+class SessionInit(Packet):
+    """[recurring keepalive Packet]
+
+    Args:
+        Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
+    """
+
+    name = "SessionInit"
+    fields_desc = [LEIntField("ID", None), LEIntField("Epoch", None)]
+
+
+class EncryptionInit(Packet):
+    """[recurring keepalive Packet]
+
+    Args:
+        Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
+    """
+
+    name = "EncryptionInit"
+    fields_desc = [LEIntField("ID", None), LEIntField("Epoch", None)]
+
 class Segment(Packet):
     """[segments the raw packet]
 
@@ -698,10 +719,19 @@ class Segment(Packet):
         XLEIntField("ActorID", None),
         XLEIntField("LoginUserID", None),
         LEShortEnumField(
-            "Type", None, {3: "IPC", 7: "ClientKeepAlive",
-                           8: "ServerKeepAlive"}
+            "Type", None, {1: "SessionInit", 3: "IPC", 7: "ClientKeepAlive",
+                           8: "ServerKeepAlive", 9: "EncryptionInit"}
         ),
         XShortField("Unknown", None),
+        ConditionalField(
+            PacketListField(
+                "data",
+                None,
+                SessionInit,
+                length_from=lambda pkt: pkt.Size - 16,
+            ),
+            lambda pkt: pkt.Type == 1,
+        ),
         ConditionalField(
             PacketListField(
                 "data",
@@ -719,6 +749,15 @@ class Segment(Packet):
                 length_from=lambda pkt: pkt.Size - 16,
             ),
             lambda pkt: pkt.Type == 7,
+        ),
+        ConditionalField(
+            PacketListField(
+                "data",
+                None,
+                EncryptionInit,
+                length_from=lambda pkt: pkt.Size - 16,
+            ),
+            lambda pkt: pkt.Type == 9,
         ),
         ConditionalField(
             PacketListField(
@@ -839,9 +878,11 @@ class FFXIV(Packet):
 
 bind_layers(TCP, FFXIV)
 bind_layers(FFXIV, Segment)
+bind_layers(SessionInit, IPC, Type=1)
 bind_layers(Segment, IPC, Type=3)
 bind_layers(Segment, ClientKeepAlive, Type=7)
 bind_layers(Segment, ServerKeepAlive, Type=8)
+bind_layers(EncryptionInit, IPC, Type=9)
 bind_layers(IPC, GroupMessage, ipc_type=101)
 bind_layers(IPC, Whisper, ipc_type=100)
 bind_layers(IPC, SystemLogMessage, ipc_type=989)
@@ -854,5 +895,5 @@ for k, v in joined_list.items():
         #print(f"[-] Class {v} for Opcode {k} not implemented.")
         bind_layers(IPC, OpcodeNotImplemented, ipc_type=k)
 
-for k in list(set(range(1, 1024)) - set(joined_list.keys())):
+for k in list(set(range(1, 65536)) - set(joined_list.keys())):
     bind_layers(IPC, Unknown, ipc_type=k)

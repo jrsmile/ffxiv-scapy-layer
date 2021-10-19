@@ -11,7 +11,7 @@ from scapy.layers.l2 import Ether
 from scapy.layers.inet import IP, TCP
 from scapy.layers.tls.all import *
 from scapy.utils import wrpcap
-from ffxiv import IPC, FFXIV, ChatHandler, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive, ActorControlSelf, UpdateHpMpTp
+from ffxiv import IPC, FFXIV, ChatHandler, EncryptionInit, SessionInit, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive, ActorControlSelf, UpdateHpMpTp
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -81,7 +81,8 @@ def poll_packet_queue(token: str):
         try:
             #print(f"{raw_packet.summary()}")
 
-            if raw_packet.haslayer(IPC) and (raw_packet[IPC].ipc_magic == 0x14):
+            # and (raw_packet[IPC].ipc_magic == 0x14):
+            if raw_packet.haslayer(IPC):
                 # other magic types are possibly TLS encrypted
                 if raw_packet[IPC].ipc_type in joined_list.keys():
                     pdfpath = f"PDFs/IPC_{raw_packet[IPC].ipc_type}_{joined_list[raw_packet[IPC].ipc_type]}.pdf"
@@ -112,7 +113,7 @@ def poll_packet_queue(token: str):
             #    if not raw_packet[TCP].flags == "A":
             #        print(f"{raw_packet.summary()}")
 
-            if raw_packet.haslayer(FFXIV) and raw_packet.haslayer(Raw):
+            if raw_packet.haslayer(SessionInit) or raw_packet.haslayer(EncryptionInit):
                 print(
                     "###############################################################################")
                 raw_packet.show()
