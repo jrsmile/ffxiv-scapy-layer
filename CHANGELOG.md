@@ -1,3 +1,10 @@
+## [1.10.1](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.10.0...v1.10.1) (2021-10-19)
+
+
+### Bug Fixes
+
+* added session and encryption detection ([2c40523](https://s2.behead.de/git/ffxiv-scapy-layer/commit/2c40523a8876abb39afeaf0b13447412864b44b8))
+
 # [1.10.0](https://s2.behead.de/git/ffxiv-scapy-layer/compare/v1.9.0...v1.10.0) (2021-10-12)
 
 
