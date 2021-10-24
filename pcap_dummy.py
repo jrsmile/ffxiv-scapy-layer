@@ -91,7 +91,7 @@ def poll_packet_queue(token: str):
                     raw_packet[IPC].pdfdump(pdfpath)
                     wrpcap('IPCs.pcap', raw_packet, append=True)
             '''
-            #if raw_packet.haslayer(TLS):
+            # if raw_packet.haslayer(TLS):
             #    raw_packet.show()
             # if raw_packet.haslayer(FFXIV_UpdatePositionHandler): # and raw_packet[FFXIV].msg_count > 1:
             #    posX = raw_packet["FFXIV_UpdatePositionHandler"].x
@@ -99,7 +99,7 @@ def poll_packet_queue(token: str):
             #    posZ = raw_packet["FFXIV_UpdatePositionHandler"].z
             #    print(f"X: {posX} Y: {posY} Z: {posZ}")
 
-            #if raw_packet.haslayer(IPC) and not raw_packet.haslayer(Raw):
+            # if raw_packet.haslayer(IPC) and not raw_packet.haslayer(Raw):
             #    result = f"{raw_packet.show(dump=True)}"
             #    for item in result.split("\n"):
             #        if "ipc_type" in item:
@@ -108,13 +108,13 @@ def poll_packet_queue(token: str):
             #        if "Message" in item:
             #            print(item.strip())
 
-            #if not raw_packet.haslayer(FFXIV):
+            # if not raw_packet.haslayer(FFXIV):
             #    if not raw_packet[TCP].flags == "A":
             #        print(f"{raw_packet.summary()}")
 
             if raw_packet.haslayer(FFXIV) and raw_packet[FFXIV].compressed:
-            #    print(
-            #        "###############################################################################")
+                #    print(
+                #        "###############################################################################")
                 raw_packet.show()
 
         except:

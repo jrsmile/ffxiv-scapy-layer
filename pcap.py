@@ -11,14 +11,16 @@ from scapy.layers.l2 import Ether
 from scapy.layers.inet import IP, TCP
 from scapy.layers.tls.all import *
 from scapy.utils import wrpcap
-from ffxiv import IPC, FFXIV, ChatHandler, EncryptionInit, SessionInit, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive, ActorControlSelf, UpdateHpMpTp
+from ffxiv import IPC, FFXIV, ChatHandler, EncryptionInit, SessionInit, UpdatePositionHandler, Segment, ServerKeepAlive, ClientKeepAlive, ActorControlSelf, UpdateHpMpTp, UpdatePositionInstance
+import blowfish
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 log.setLevel(logging.INFO)
 
-
-# conf.layers.filter([Ether, IP, TCP, FFXIV]) # böse, ganz böse
+EncryptionKey = bytearray(
+    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+print(EncryptionKey)
 
 # generate enum lists for FFXIV_IPC Types
 with urllib.request.urlopen(
@@ -81,8 +83,7 @@ def poll_packet_queue(token: str):
         try:
             #print(f"{raw_packet.summary()}")
 
-            # and (raw_packet[IPC].ipc_magic == 0x14):
-            if raw_packet.haslayer(IPC):
+            if raw_packet.haslayer(IPC) and (raw_packet[IPC].ipc_magic == 0x14):
                 # other magic types are possibly TLS encrypted
                 if raw_packet[IPC].ipc_type in joined_list.keys():
                     pdfpath = f"PDFs/IPC_{raw_packet[IPC].ipc_type}_{joined_list[raw_packet[IPC].ipc_type]}.pdf"
@@ -92,7 +93,7 @@ def poll_packet_queue(token: str):
                     raw_packet[IPC].pdfdump(pdfpath)
                     wrpcap('IPCs.pcap', raw_packet, append=True)
 
-            if not (raw_packet.haslayer(ActorControlSelf) or raw_packet.haslayer(UpdateHpMpTp) or raw_packet[TCP].flags == 'A'):
+            if not (raw_packet.haslayer(ActorControlSelf) or raw_packet.haslayer(UpdateHpMpTp) or raw_packet.haslayer(UpdatePositionHandler) or raw_packet.haslayer(UpdatePositionInstance) or raw_packet[TCP].flags == 'A'):
                 print(f"{raw_packet.summary()}")
             # if raw_packet.haslayer(FFXIV_UpdatePositionHandler): # and raw_packet[FFXIV].msg_count > 1:
             #    posX = raw_packet["FFXIV_UpdatePositionHandler"].x
@@ -117,6 +118,12 @@ def poll_packet_queue(token: str):
                 print(
                     "###############################################################################")
                 raw_packet.show()
+
+            if raw_packet.haslayer(EncryptionInit):
+                global EncryptionKey
+                EncryptionKey = bytearray(
+                    raw_packet["EncryptionInit"].Key)
+                print(EncryptionKey)
 
         except:
             log.exception(f"Failed to parse: {raw_packet.summary()}")

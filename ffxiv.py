@@ -18,6 +18,7 @@ import json
 import struct
 from scapy.compat import base64_bytes, bytes_base64
 from importlib import reload
+import blowfish
 
 # from scapy.all import *
 from scapy.layers.inet import TCP
@@ -702,9 +703,27 @@ class EncryptionInit(Packet):
     Args:
         Packet ([Packet]): [raw Packet stripped by FFXIV_Segment]
     """
+    '''
+        |###[ Segment ]###
+    |  Size      = 632
+    |  ActorID   = 0x0
+    |  LoginUserID= 0x0
+    |  Type      = EncryptionInit
+    |  Unknown   = 0x0
+    |  \data      \
+    |   |###[ EncryptionInit ]###
+    |   |  ID        = 0
+    |   |  Epoch     = 0
+    |   |###[ Raw ]###
+    |   |     load      = '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0025d393fdb9048d445ccf986a006209ed\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00,Cna\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+    '''
 
     name = "EncryptionInit"
-    fields_desc = [LEIntField("ID", None), LEIntField("Epoch", None)]
+    fields_desc = [
+        StrFixedLenField("Padding", None, 36),
+        StrFixedLenField("Key", None, 32),
+        FieldListField("data", None, ByteField("", 0))
+    ]
 
 class Segment(Packet):
     """[segments the raw packet]
@@ -844,19 +863,35 @@ class FFXIV(Packet):
             [Packet]: [reassembled Packet]
         """
         #pylint: disable=unused-argument
+        #  Fun Fact Macgic Dispays as: FF14ARR
         if struct.unpack("<I", data[:4])[0] == 1101025874 or (struct.unpack("<I", data[:4])[0] == 0 and struct.unpack("<I", data[4:8])[0] == 0 and struct.unpack("<I", data[8:12])[0] == 0 and struct.unpack("<I", data[12:16])[0] == 0):
             length = struct.unpack("<I", data[24:28])[0]  # get bundle_len
+            ipc_magic = struct.unpack("<I", data[40:44])[0]  # get ipc_magick
             fragment = FFXIV(data)
+
+            '''
+            # data after header is blowfish-cbc encrypted
+            print("\n##########################\n" + F"{ipc_magic}" + "\n")
+            if ipc_magic != 0x14:
+                try:
+                    global EncryptionKey
+                    EncryptionKey = b'25d393fdb9048d445ccf986a006209ed'
+                    cipher_little = blowfish.Cipher(
+                        EncryptionKey, byte_order="little")
+                    data = b"".join(
+                        [data[:40], cipher_little.decrypt_ecb(data[:40])])
+                except Exception as e:
+                    print("\n" + F"{e}")
+                    #return data  # void packet if decrypt error
+            '''
             if fragment.compressed:
                 # data after header, was deflate compressed
                 try:
-                    # without 40 bit ffxiv bundle header, with 2 bit deflate header
-                    print(str(len(data)) + " ", end='')
+                    # without 40 bit ffxiv bundle header, without 2 bit deflate header
                     inflated = zlib.decompress(
                         data[42:length], -zlib.MAX_WBITS, length)
                     # rejoin data with inflated segments omitting the deflate header
                     data = b"".join([data[:40], inflated])
-                    print(str(len(data)) + "")
                 except Exception as e:
                     print("\n" + F"{e}")
                     return data  # void packet if inflate error
@@ -878,11 +913,11 @@ class FFXIV(Packet):
 
 bind_layers(TCP, FFXIV)
 bind_layers(FFXIV, Segment)
-bind_layers(SessionInit, IPC, Type=1)
+bind_layers(Segment, SessionInit, Type=1)
 bind_layers(Segment, IPC, Type=3)
 bind_layers(Segment, ClientKeepAlive, Type=7)
 bind_layers(Segment, ServerKeepAlive, Type=8)
-bind_layers(EncryptionInit, IPC, Type=9)
+bind_layers(Segment, EncryptionInit, Type=9)
 bind_layers(IPC, GroupMessage, ipc_type=101)
 bind_layers(IPC, Whisper, ipc_type=100)
 bind_layers(IPC, SystemLogMessage, ipc_type=989)
@@ -895,5 +930,5 @@ for k, v in joined_list.items():
         #print(f"[-] Class {v} for Opcode {k} not implemented.")
         bind_layers(IPC, OpcodeNotImplemented, ipc_type=k)
 
-for k in list(set(range(1, 65536)) - set(joined_list.keys())):
+for k in list(set(range(1, 1024)) - set(joined_list.keys())):
     bind_layers(IPC, Unknown, ipc_type=k)

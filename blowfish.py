@@ -53,6 +53,7 @@ working c# implementation: https://github.com/goatcorp/FFXIVQuickLauncher/blob/m
 description of broken implementation: https://github.com/Jadd/MoogleBot/blob/master/MoogleBot.Runtime/Cryptography/Blowfish.cs
 https://xiv.dev/network/packet-structure
 https://blog.sudeium.com/2021/01/11/launching-final-fantasy-xiv-on-macos/
+blowfish-cbc: https://github.com/SapphireServer/ffxivmon/blob/master/FFXIVMonReborn/LobbyEncryption/LobbyEncryptionProvider.cs
 """
 
 from struct import Struct, error as struct_error
